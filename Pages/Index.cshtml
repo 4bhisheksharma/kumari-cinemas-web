@@ -1,10 +1,263 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@* HERO SECTION  *@
+<section class="kc-hero">
+    <div class="kc-hero-overlay"></div>
+    <div class="kc-hero-content container text-center">
+        <img src="~/assets/kumari_cinemas.png" alt="Kumari Cinemas" class="kc-hero-logo mb-4" />
+        <h1 class="kc-hero-title">Welcome to <span class="kc-gold">Kumari Cinemas</span></h1>
+        <p class="kc-hero-subtitle">Nepal's Premier Cinematic Experience &mdash; Luxury. Comfort. Magic.</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap mt-4">
+            <a href="#now-showing" class="btn kc-btn-primary btn-lg px-5">
+                <i class="fa-solid fa-play me-2"></i>Now Showing
+            </a>
+            <a href="#coming-soon" class="btn kc-btn-outline btn-lg px-5">
+                <i class="fa-regular fa-clock me-2"></i>Coming Soon
+            </a>
+        </div>
+        <div class="kc-hero-stats d-flex justify-content-center gap-5 mt-5 flex-wrap">
+            <div class="kc-stat">
+                <span class="kc-stat-number">5</span>
+                <span class="kc-stat-label">Screens</span>
+            </div>
+            <div class="kc-stat">
+                <span class="kc-stat-number">500+</span>
+                <span class="kc-stat-label">Seats</span>
+            </div>
+            <div class="kc-stat">
+                <span class="kc-stat-number">4K</span>
+                <span class="kc-stat-label">Projection</span>
+            </div>
+            <div class="kc-stat">
+                <span class="kc-stat-number">Dolby</span>
+                <span class="kc-stat-label">Surround Sound</span>
+            </div>
+        </div>
+    </div>
+    <div class="kc-hero-scroll">
+        <a href="#now-showing"><i class="fa-solid fa-chevron-down"></i></a>
+    </div>
+</section>
+
+@* NOW SHOWING SECTION  *@
+<section id="now-showing" class="kc-section kc-section-dark">
+    <div class="container">
+        <div class="kc-section-header text-center mb-5">
+            <span class="kc-section-badge">On Screen</span>
+            <h2 class="kc-section-title">Now Showing</h2>
+            <p class="kc-section-sub">Catch the latest blockbusters on our premium screens</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="kc-movie-card">
+                    <div class="kc-movie-poster" style="background: linear-gradient(135deg, #1a1a2e, #e94560);">
+                        <div class="kc-movie-badge">PG-13</div>
+                        <div class="kc-movie-overlay">
+                            <a href="#" class="btn kc-btn-primary btn-sm"><i
+                                class="fa-solid fa-ticket me-1"></i>Book</a>
+                            </div>
+                            <i class="fa-solid fa-film kc-movie-icon"></i>
+                        </div>
+                        <div class="kc-movie-info">
+                            <h5 class="kc-movie-title">Everest's Call</h5>
+                            <div class="kc-movie-meta">
+                                <span><i class="fa-solid fa-star text-warning me-1"></i>8.2</span>
+                                <span><i class="fa-regular fa-clock me-1"></i>2h 18m</span>
+                            </div>
+                            <div class="kc-movie-genre">Adventure · Drama</div>
+                            <div class="kc-showtimes mt-2">
+                                <span class="kc-showtime-pill">10:00</span>
+                                <span class="kc-showtime-pill">14:30</span>
+                                <span class="kc-showtime-pill">19:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="kc-movie-card">
+                        <div class="kc-movie-poster" style="background: linear-gradient(135deg, #0f3460, #533483);">
+                            <div class="kc-movie-badge">R</div>
+                            <div class="kc-movie-overlay">
+                                <a href="#" class="btn kc-btn-primary btn-sm"><i
+                                    class="fa-solid fa-ticket me-1"></i>Book</a>
+                                </div>
+                                <i class="fa-solid fa-mask kc-movie-icon"></i>
+                            </div>
+                            <div class="kc-movie-info">
+                                <h5 class="kc-movie-title">Shadow Realm</h5>
+                                <div class="kc-movie-meta">
+                                    <span><i class="fa-solid fa-star text-warning me-1"></i>7.9</span>
+                                    <span><i class="fa-regular fa-clock me-1"></i>2h 5m</span>
+                                </div>
+                                <div class="kc-movie-genre">Thriller · Action</div>
+                                <div class="kc-showtimes mt-2">
+                                    <span class="kc-showtime-pill">11:15</span>
+                                    <span class="kc-showtime-pill">15:45</span>
+                                    <span class="kc-showtime-pill">20:30</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="kc-movie-card">
+                            <div class="kc-movie-poster" style="background: linear-gradient(135deg, #16213e, #e94560);">
+                                <div class="kc-movie-badge">U/A</div>
+                                <div class="kc-movie-overlay">
+                                    <a href="#" class="btn kc-btn-primary btn-sm"><i
+                                        class="fa-solid fa-ticket me-1"></i>Book</a>
+                                    </div>
+                                    <i class="fa-solid fa-heart kc-movie-icon"></i>
+                                </div>
+                                <div class="kc-movie-info">
+                                    <h5 class="kc-movie-title">Kathmandu Nights</h5>
+                                    <div class="kc-movie-meta">
+                                        <span><i class="fa-solid fa-star text-warning me-1"></i>8.6</span>
+                                        <span><i class="fa-regular fa-clock me-1"></i>1h 58m</span>
+                                    </div>
+                                    <div class="kc-movie-genre">Romance · Drama</div>
+                                    <div class="kc-showtimes mt-2">
+                                        <span class="kc-showtime-pill">12:00</span>
+                                        <span class="kc-showtime-pill">16:30</span>
+                                        <span class="kc-showtime-pill">21:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="kc-movie-card">
+                                <div class="kc-movie-poster" style="background: linear-gradient(135deg, #1b1b2f, #fca652);">
+                                    <div class="kc-movie-badge">U</div>
+                                    <div class="kc-movie-overlay">
+                                        <a href="#" class="btn kc-btn-primary btn-sm"><i
+                                            class="fa-solid fa-ticket me-1"></i>Book</a>
+                                        </div>
+                                        <i class="fa-solid fa-rocket kc-movie-icon"></i>
+                                    </div>
+                                    <div class="kc-movie-info">
+                                        <h5 class="kc-movie-title">Star Odyssey</h5>
+                                        <div class="kc-movie-meta">
+                                            <span><i class="fa-solid fa-star text-warning me-1"></i>9.1</span>
+                                            <span><i class="fa-regular fa-clock me-1"></i>2h 42m</span>
+                                        </div>
+                                        <div class="kc-movie-genre">Sci-Fi · Epic</div>
+                                        <div class="kc-showtimes mt-2">
+                                            <span class="kc-showtime-pill">09:30</span>
+                                            <span class="kc-showtime-pill">13:30</span>
+                                            <span class="kc-showtime-pill">18:00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                @* EXPERIENCE HIGHLIGHTS  *@
+                <section class="kc-section kc-section-mid">
+                    <div class="container">
+                        <div class="kc-section-header text-center mb-5">
+                            <span class="kc-section-badge">Why Choose Us</span>
+                            <h2 class="kc-section-title">The Kumari Experience</h2>
+                        </div>
+                        <div class="row g-4 text-center">
+                            <div class="col-6 col-md-3">
+                                <div class="kc-feature-card">
+                                    <div class="kc-feature-icon"><i class="fa-solid fa-display"></i></div>
+                                    <h5>4K Laser Projection</h5>
+                                    <p class="text-secondary small">Crystal-clear visuals on a massive 60-foot screen.</p>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="kc-feature-card">
+                                    <div class="kc-feature-icon"><i class="fa-solid fa-volume-high"></i></div>
+                                    <h5>Dolby Atmos Sound</h5>
+                                    <p class="text-secondary small">Immersive 3D audio that surrounds you completely.</p>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="kc-feature-card">
+                                    <div class="kc-feature-icon"><i class="fa-solid fa-couch"></i></div>
+                                    <h5>Luxury Recliners</h5>
+                                    <p class="text-secondary small">Premium heated seats with extra legroom.</p>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="kc-feature-card">
+                                    <div class="kc-feature-icon"><i class="fa-solid fa-utensils"></i></div>
+                                    <h5>In-Seat Dining</h5>
+                                    <p class="text-secondary small">Chef-curated menu delivered to your seat.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                @* COMING SOON SECTION *@
+                <section id="coming-soon" class="kc-section kc-section-dark">
+                    <div class="container">
+                        <div class="kc-section-header text-center mb-5">
+                            <span class="kc-section-badge">Upcoming</span>
+                            <h2 class="kc-section-title">Coming Soon</h2>
+                            <p class="kc-section-sub">Get notified the moment tickets go live</p>
+                        </div>
+                        <div class="row g-4 justify-content-center">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="kc-upcoming-card">
+                                    <div class="kc-upcoming-badge">Apr 18</div>
+                                    <div class="kc-upcoming-body">
+                                        <h5 class="kc-movie-title mb-1">The Last Sherpa</h5>
+                                        <p class="text-secondary small mb-3">A gripping tale of survival high on the slopes of Everest,
+                                            based on a true story.</p>
+                                            <div class="d-flex gap-2">
+                                                <span class="kc-tag">Adventure</span>
+                                                <span class="kc-tag">Biography</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="kc-upcoming-card">
+                                        <div class="kc-upcoming-badge">May 2</div>
+                                        <div class="kc-upcoming-body">
+                                            <h5 class="kc-movie-title mb-1">Neon Deity</h5>
+                                            <p class="text-secondary small mb-3">A cyberpunk thriller set in the neon-drenched alleyways of
+                                                a futuristic Kathmandu.</p>
+                                                <div class="d-flex gap-2">
+                                                    <span class="kc-tag">Sci-Fi</span>
+                                                    <span class="kc-tag">Thriller</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="kc-upcoming-card">
+                                            <div class="kc-upcoming-badge">May 23</div>
+                                            <div class="kc-upcoming-body">
+                                                <h5 class="kc-movie-title mb-1">Rivers of Gold</h5>
+                                                <p class="text-secondary small mb-3">An epic family journey through the ancient rivers and
+                                                    forests of rural Nepal.</p>
+                                                    <div class="d-flex gap-2">
+                                                        <span class="kc-tag">Family</span>
+                                                        <span class="kc-tag">Drama</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                             @* CTA STRIP  *@
+                            <section class="kc-cta-strip">
+                                <div class="container text-center py-5">
+                                    <h2 class="kc-section-title mb-2">Ready for the Big Screen?</h2>
+                                    <p class="kc-section-sub mb-4">Book your seats online and skip the queue.</p>
+                                    <a href="#now-showing" class="btn kc-btn-primary btn-lg px-5">
+                                        <i class="fa-solid fa-ticket me-2"></i>Book Tickets Now
+                                    </a>
+                                </div>
+                            </section>

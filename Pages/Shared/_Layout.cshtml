@@ -3,55 +3,85 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - KumariCinemas.Web</title>
+    <title>@ViewData["Title"] - Kumari Cinemas</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/KumariCinemas.Web.styles.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Montserrat:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
-<body>
+<body class="kc-body">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg kc-navbar fixed-top">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">KumariCinemas.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                <a class="navbar-brand kc-brand" asp-area="" asp-page="/Index">
+                    <i class="fa-solid fa-film me-2"></i>Kumari Cinemas
+                </a>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+                        data-bs-target=".navbar-collapse"          aria-controls="navbarSupportedContent" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <i class="fa-solid fa-bars text-white"></i>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-end">
+                    <ul class="navbar-nav align-items-center gap-2">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link kc-nav-link" asp-area="" asp-page="/Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            <a class="nav-link kc-nav-link" href="#now-showing">Now Showing</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Users/UserList">Users</a>
+                            <a class="nav-link kc-nav-link" href="#coming-soon">Coming Soon</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link kc-nav-link" asp-area="" asp-page="/Users/UserList">Users</a>
+                        </li>
+                        <li class="nav-item ms-2">
+                            <a class="btn kc-btn-primary" href="#now-showing">
+                                <i class="fa-solid fa-ticket me-1"></i> Book Tickets
+                            </a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <main role="main">
+        @RenderBody()
+    </main>
 
-    <footer class="border-top footer text-muted">
+    <footer class="kc-footer">
         <div class="container">
-            &copy; 2026 - KumariCinemas.Web - <a href="https://www.abhishek-sharma.com.np/ "
-                                                 target="_blank">Developer</a>
-        </div>
-    </footer>
+            <div class="row py-4 align-items-center">
+                <div class="col-md-5 mb-3 mb-md-0">
+                    <span class="kc-brand fs-5"><i class="fa-solid fa-film me-2"></i>Kumari Cinemas</span>
+                    <p class="text-secondary small mt-1 mb-0">Your ultimate cinematic experience in Nepal.</p>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="d-flex gap-3 justify-content-md-center">
+                        <a href="#" class="kc-social-link"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="kc-social-link"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="kc-social-link"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="kc-social-link"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-3 text-md-end">
+                    <p class="text-secondary small mb-0">&copy; 2026 Kumari Cinemas &mdash; <a class="kc-footer-link"
+                                                                                                   href="https://www.abhishek-sharma.com.np/" target="_blank">Developer</a></p>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
 
 </html>

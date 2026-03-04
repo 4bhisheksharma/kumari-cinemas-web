@@ -1,0 +1,27 @@
+@page
+@model UserList
+@{
+    ViewData["Title"] = "User List";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Here is the list of all users</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.UserID</td>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>

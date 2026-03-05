@@ -124,4 +124,93 @@ public class ReportService : BaseService
 
         return report;
     }
+
+    // ────────────────────────────────────────────────────
+    //  Theatre dropdown for the TheaterCityHall report
+    // ────────────────────────────────────────────────────
+    public List<SelectListItem> GetTheatreOptions() => Query(
+        "SELECT TheatreID, TheatreName || ' (' || TheatreCity || ')' FROM Theatre ORDER BY TheatreName",
+        r => new SelectListItem
+        {
+            Value = r.GetInt32(0).ToString(),
+            Text = r.IsDBNull(1) ? $"Theatre #{r.GetInt32(0)}" : r.GetString(1)
+        });
+
+    // ────────────────────────────────────────────────────
+    //  Complex query: TheaterCityHall Movie Report
+    // ────────────────────────────────────────────────────
+    //
+    //  SQL QUERY (Oracle 21c):
+    //  ---------------------------------------------------------
+    //  SELECT th.TheatreID, th.TheatreName, th.TheatreCity, th.TheatreAddress, th.TheatreContactNumber,
+    //         s.ShowID, s.ShowDate, s.ShowTime, s.StartTime, s.EndTime,
+    //         m.Title, m.Genre, m.Language, m.Duration, m.ReleaseDate,
+    //         h.HallName, h.HallCapacity, h.ExperienceType, h.ScreenSize
+    //  FROM   Theatre th
+    //         JOIN Hall h ON h.TheatreID = th.TheatreID
+    //         JOIN Show s ON s.HallID    = h.HallID
+    //         JOIN Movie m ON s.MovieID  = m.MovieID
+    //  WHERE  th.TheatreID = :theatreId
+    //  ORDER BY s.ShowDate DESC, s.ShowTime, h.HallName
+    //  ---------------------------------------------------------
+
+    private const string TheaterMovieSql = @"
+        SELECT th.TheatreID, th.TheatreName, th.TheatreCity, th.TheatreAddress, th.TheatreContactNumber,
+               s.ShowID, s.ShowDate, s.ShowTime, s.StartTime, s.EndTime,
+               m.Title, m.Genre, m.Language, m.Duration, m.ReleaseDate,
+               h.HallName, h.HallCapacity, h.ExperienceType, h.ScreenSize
+        FROM   Theatre th
+               JOIN Hall h ON h.TheatreID = th.TheatreID
+               JOIN Show s ON s.HallID    = h.HallID
+               JOIN Movie m ON s.MovieID  = m.MovieID
+        WHERE  th.TheatreID = :theatreId
+        ORDER BY s.ShowDate DESC, s.ShowTime, h.HallName";
+
+    public TheaterMovieReport? GetTheaterMovieReport(int theatreId)
+    {
+        TheaterMovieReport? report = null;
+
+        using var conn = OpenConnection();
+        using var cmd = new OracleCommand(TheaterMovieSql, conn);
+        cmd.Parameters.Add(Param("theatreId", theatreId));
+        using var r = cmd.ExecuteReader();
+
+        while (r.Read())
+        {
+            report ??= new TheaterMovieReport
+            {
+                TheatreID = r.GetInt32(0),
+                TheatreName = r.GetString(1),
+                TheatreCity = r.IsDBNull(2) ? string.Empty : r.GetString(2),
+                TheatreAddress = r.IsDBNull(3) ? string.Empty : r.GetString(3),
+                TheatreContactNumber = r.IsDBNull(4) ? string.Empty : r.GetString(4)
+            };
+
+            report.Shows.Add(new TheaterMovieRow
+            {
+                ShowID = r.GetInt32(5),
+                ShowDate = r.GetDateTime(6),
+                ShowTime = r.GetDateTime(7),
+                StartTime = r.IsDBNull(8) ? null : r.GetDateTime(8),
+                EndTime = r.IsDBNull(9) ? null : r.GetDateTime(9),
+                MovieTitle = r.GetString(10),
+                Genre = r.IsDBNull(11) ? string.Empty : r.GetString(11),
+                Language = r.IsDBNull(12) ? string.Empty : r.GetString(12),
+                Duration = r.IsDBNull(13) ? 0 : r.GetInt32(13),
+                ReleaseDate = r.IsDBNull(14) ? null : r.GetDateTime(14),
+                HallName = r.GetString(15),
+                HallCapacity = r.IsDBNull(16) ? 0 : r.GetInt32(16),
+                ExperienceType = r.IsDBNull(17) ? string.Empty : r.GetString(17),
+                ScreenSize = r.IsDBNull(18) ? string.Empty : r.GetString(18)
+            });
+        }
+
+        if (report != null)
+        {
+            report.TotalShows = report.Shows.Count;
+            report.UniqueMovies = report.Shows.Select(s => s.MovieTitle).Distinct().Count();
+        }
+
+        return report;
+    }
 }

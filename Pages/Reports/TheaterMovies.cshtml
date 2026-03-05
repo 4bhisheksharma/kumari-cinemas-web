@@ -1,0 +1,210 @@
+@page "/reports/theater-movies"
+@model KumariCinemas.Web.Pages.Reports.TheaterMoviesModel
+@{
+    ViewData["Title"] = "TheaterCityHall Movie Report";
+}
+
+<div class="kc-page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between py-4 flex-wrap gap-3">
+            <div>
+                <h1 class="kc-dashboard-title mb-1">
+                    <i class="fa-solid fa-building me-2 kc-gold"></i>TheaterCityHall Movie Report
+                </h1>
+                <p class="text-secondary mb-0 small">
+                    Select a theatre to view all movies and showtime details for its halls.
+                </p>
+            </div>
+            <a href="/reports" class="btn kc-btn-outline btn-sm">
+                <i class="fa-solid fa-arrow-left me-1"></i>Back to Reports
+            </a>
+        </div>
+    </div>
+</div>
+
+@* ── Search Form ──────────────────────────────────────────── *@
+<section class="kc-section kc-section-dark" style="padding: 1.5rem 0;">
+    <div class="container">
+        <form method="post" class="row g-3 align-items-end">
+            <div class="col-md-6 col-lg-4">
+                <label class="form-label">Select Theatre</label>
+                <select class="form-select kc-input" name="SelectedTheatreId" required>
+                    <option value="">-- Choose a Theatre --</option>
+                    @foreach (var t in Model.TheatreOptions)
+                    {
+                        <option value="@t.Value" selected="@(t.Value == Model.SelectedTheatreId?.ToString())">@t.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn kc-btn-primary">
+                    <i class="fa-solid fa-magnifying-glass me-1"></i>Generate Report
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+@if (TempData["Info"] != null)
+{
+    <div class="container mt-3">
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-info me-1"></i>@TempData["Info"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+
+@* ── Report Output ────────────────────────────────────────── *@
+@if (Model.Report != null)
+{
+    var rpt = Model.Report;
+
+    @* ── THEATRE DETAILS CARD ── *@
+    <section class="kc-section kc-section-mid" style="padding: 1.5rem 0;">
+        <div class="container">
+            <div class="kc-card p-4">
+                <h5 class="kc-gold mb-3"><i class="fa-solid fa-building me-2"></i>Theatre Details</h5>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <span class="text-secondary small d-block">Theatre Name</span>
+                        <strong class="text-white">@rpt.TheatreName</strong>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="text-secondary small d-block">City</span>
+                        <span class="text-white">@(string.IsNullOrEmpty(rpt.TheatreCity) ? "—" : rpt.TheatreCity)</span>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="text-secondary small d-block">Address</span>
+                        <span class="text-white">@(string.IsNullOrEmpty(rpt.TheatreAddress) ? "—" : rpt.TheatreAddress)</span>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="text-secondary small d-block">Contact</span>
+                        <span class="text-white">@(string.IsNullOrEmpty(rpt.TheatreContactNumber) ? "—" : rpt.TheatreContactNumber)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ── SUMMARY STATS ── *@
+    <section class="kc-section kc-section-dark py-3">
+        <div class="container">
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <div class="kc-stat-card">
+                        <div class="kc-stat-icon kc-icon-gold"><i class="fa-solid fa-calendar-days"></i></div>
+                        <div class="kc-stat-body">
+                            <span class="kc-stat-value">@rpt.TotalShows</span>
+                            <span class="kc-stat-label">Total Shows</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="kc-stat-card">
+                        <div class="kc-stat-icon kc-icon-green"><i class="fa-solid fa-film"></i></div>
+                        <div class="kc-stat-body">
+                            <span class="kc-stat-value">@rpt.UniqueMovies</span>
+                            <span class="kc-stat-label">Unique Movies</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="kc-stat-card">
+                        <div class="kc-stat-icon kc-icon-blue"><i class="fa-solid fa-door-open"></i></div>
+                        <div class="kc-stat-body">
+                            <span class="kc-stat-value">@rpt.Shows.Select(s => s.HallName).Distinct().Count()</span>
+                            <span class="kc-stat-label">Halls Used</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="kc-stat-card">
+                        <div class="kc-stat-icon kc-icon-red"><i class="fa-solid fa-language"></i></div>
+                        <div class="kc-stat-body">
+                            <span class="kc-stat-value">@rpt.Shows.Select(s => s.Language).Where(l => !string.IsNullOrEmpty(l)).Distinct().Count()</span>
+                            <span class="kc-stat-label">Languages</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ── SHOWTIME TABLE ── *@
+    <section class="kc-section kc-section-dark" style="padding: 1rem 0 3rem;">
+        <div class="container">
+            <h5 class="kc-gold mb-3"><i class="fa-solid fa-list me-2"></i>Movie &amp; Showtime Details</h5>
+            <div class="table-responsive">
+                <table class="table kc-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Movie</th>
+                            <th>Genre / Lang</th>
+                            <th>Duration</th>
+                            <th>Release Date</th>
+                            <th>Hall</th>
+                            <th>Experience</th>
+                            <th>Capacity</th>
+                            <th>Show Date</th>
+                            <th>Show Time</th>
+                            <th>Start / End</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var idx = 0;
+                        }
+                        @foreach (var s in rpt.Shows)
+                        {
+                            idx++;
+                            <tr>
+                                <td class="text-secondary">@idx</td>
+                                <td><strong class="text-white">@s.MovieTitle</strong></td>
+                                <td class="small">@s.Genre / @s.Language</td>
+                                <td>@s.Duration min</td>
+                                <td class="small">@(s.ReleaseDate.HasValue ? s.ReleaseDate.Value.ToString("MMM d, yyyy") : "—")</td>
+                                <td>
+                                    @s.HallName
+                                    @if (!string.IsNullOrEmpty(s.ScreenSize))
+                                    {
+                                        <br /><span class="text-secondary small">@s.ScreenSize</span>
+                                    }
+                                </td>
+                                <td><span class="kc-tag">@(string.IsNullOrEmpty(s.ExperienceType) ? "Standard" : s.ExperienceType)</span></td>
+                                <td>@s.HallCapacity seats</td>
+                                <td>@s.ShowDate.ToString("MMM d, yyyy")</td>
+                                <td class="kc-gold fw-bold">@s.ShowTime.ToString("h:mm tt")</td>
+                                <td class="small">
+                                    @(s.StartTime.HasValue ? s.StartTime.Value.ToString("h:mm tt") : "—")
+                                    &ndash;
+                                    @(s.EndTime.HasValue ? s.EndTime.Value.ToString("h:mm tt") : "—")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @* ── SQL QUERY REFERENCE ── *@
+            <details class="mt-4">
+                <summary class="kc-gold" style="cursor:pointer;">
+                    <i class="fa-solid fa-database me-1"></i>View SQL Query Used
+                </summary>
+                <pre class="mt-2 p-3"
+                     style="background:#1a1a2e; border:1px solid #333; border-radius:8px; color:#d1a530; font-size:.8rem; overflow-x:auto;">
+SELECT th.TheatreID, th.TheatreName, th.TheatreCity, th.TheatreAddress, th.TheatreContactNumber,
+       s.ShowID, s.ShowDate, s.ShowTime, s.StartTime, s.EndTime,
+       m.Title, m.Genre, m.Language, m.Duration, m.ReleaseDate,
+       h.HallName, h.HallCapacity, h.ExperienceType, h.ScreenSize
+FROM   Theatre th
+       JOIN Hall h ON h.TheatreID = th.TheatreID
+       JOIN Show s ON s.HallID    = h.HallID
+       JOIN Movie m ON s.MovieID  = m.MovieID
+WHERE  th.TheatreID = :theatreId
+ORDER BY s.ShowDate DESC, s.ShowTime, h.HallName</pre>
+            </details>
+        </div>
+    </section>
+}

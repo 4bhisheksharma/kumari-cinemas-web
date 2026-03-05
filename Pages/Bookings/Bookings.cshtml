@@ -1,0 +1,201 @@
+@page "/bookings"
+@model KumariCinemas.Web.Pages.Bookings.BookingsModel
+@{
+    ViewData["Title"] = "Bookings";
+}
+
+<div class="kc-page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between py-4 flex-wrap gap-3">
+            <div>
+                <h1 class="kc-dashboard-title mb-1">
+                    <i class="fa-solid fa-bookmark me-2 kc-gold"></i>Booking Management
+                </h1>
+                <p class="text-secondary mb-0 small">Manage user bookings for shows. Create a booking before issuing tickets.</p>
+            </div>
+            <button class="btn kc-btn-primary" data-bs-toggle="modal" data-bs-target="#bookingModal"
+                    onclick="openCreateBooking()">
+                <i class="fa-solid fa-plus me-1"></i>Add Booking
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="container">
+        <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+            <i class="fa-solid fa-check-circle me-1"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="container">
+        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-1"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+
+<section class="kc-section kc-section-dark" style="padding: 2rem 0 3rem;">
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table kc-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Confirmation</th>
+                        <th>User</th>
+                        <th>Movie</th>
+                        <th>Hall / Theatre</th>
+                        <th>Show Date</th>
+                        <th>Show Time</th>
+                        <th>Booking Time</th>
+                        <th>Reservation</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Bookings.Any())
+                    {
+                        @foreach (var b in Model.Bookings)
+                        {
+                            <tr>
+                                <td class="text-secondary">@b.BookingID</td>
+                                <td class="kc-gold small fw-bold">@b.ConfirmationNumber</td>
+                                <td>@b.UserName</td>
+                                <td><strong class="text-white">@b.MovieTitle</strong></td>
+                                <td class="small">
+                                    @b.HallName
+                                    @if (!string.IsNullOrEmpty(b.TheatreName))
+                                    {
+                                        <br /><span class="text-secondary">@b.TheatreName</span>
+                                    }
+                                </td>
+                                <td>@(b.ShowDate.HasValue ? b.ShowDate.Value.ToString("MMM d, yyyy") : "—")</td>
+                                <td>@(b.ShowTime.HasValue ? b.ShowTime.Value.ToString("h:mm tt") : "—")</td>
+                                <td class="small">@(b.BookingTime.HasValue ? b.BookingTime.Value.ToString("MMM d, yyyy h:mm tt") : "—")</td>
+                                <td class="small">@(b.ReservationDate.HasValue ? b.ReservationDate.Value.ToString("MMM d, yyyy") : "—")</td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                            data-bs-target="#bookingModal"
+                                            onclick="openEditBooking(@b.BookingID, @b.UserID, @b.ShowID, '@(b.BookingTime.HasValue ? b.BookingTime.Value.ToString("yyyy-MM-ddTHH:mm") : "")', '@(b.ReservationDate.HasValue ? b.ReservationDate.Value.ToString("yyyy-MM-dd") : "")', '@b.ConfirmationNumber')">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <form method="post" asp-page-handler="Delete" class="d-inline"
+                                          onsubmit="return confirm('Delete this booking? Related tickets may be affected.');">
+                                        <input type="hidden" name="DeleteId" value="@b.BookingID" />
+                                        <button type="submit" class="btn btn-sm kc-btn-icon-danger" title="Delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="10" class="text-center text-muted py-4">
+                                <i class="fa-solid fa-bookmark fa-2x mb-2 d-block"></i>
+                                No bookings found. Click "Add Booking" to create one.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+@* ── ADD / EDIT BOOKING MODAL ─────────────────────────────── *@
+<div class="modal fade kc-modal" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title kc-gold" id="bookingModalLabel">
+                    <i class="fa-solid fa-bookmark me-2"></i><span id="bookingModalTitle">Add New Booking</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" id="bookingForm">
+                <div class="modal-body p-4">
+                    <input type="hidden" id="fBookingId" name="BookingInput.BookingID" value="0" />
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">User</label>
+                            <select class="form-select kc-input" name="BookingInput.UserID" id="fBkUser" required>
+                                <option value="">-- Select User --</option>
+                                @foreach (var u in Model.UserOptions)
+                                {
+                                    <option value="@u.Value">@u.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Show</label>
+                            <select class="form-select kc-input" name="BookingInput.ShowID" id="fBkShow" required>
+                                <option value="">-- Select Show --</option>
+                                @foreach (var s in Model.ShowOptions)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Booking Time</label>
+                            <input type="datetime-local" class="form-control kc-input" name="BookingInput.BookingTime"
+                                   id="fBkTime">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Reservation Date</label>
+                            <input type="date" class="form-control kc-input" name="BookingInput.ReservationDate"
+                                   id="fBkResDate">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Confirmation Number</label>
+                            <input type="text" class="form-control kc-input" name="BookingInput.ConfirmationNumber"
+                                   id="fBkConfirm" placeholder="CNF-001" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn kc-btn-outline btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn kc-btn-primary btn-sm">
+                        <i class="fa-solid fa-floppy-disk me-1"></i><span id="bookingSaveText">Save Booking</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openCreateBooking() {
+            document.getElementById('bookingForm').action = '?handler=Create';
+            document.getElementById('bookingModalTitle').textContent = 'Add New Booking';
+            document.getElementById('bookingSaveText').textContent = 'Save Booking';
+            document.getElementById('fBookingId').value = '0';
+            document.getElementById('fBkUser').value = '';
+            document.getElementById('fBkShow').value = '';
+            document.getElementById('fBkTime').value = '';
+            document.getElementById('fBkResDate').value = '';
+            document.getElementById('fBkConfirm').value = '';
+        }
+        function openEditBooking(id, userId, showId, bookingTime, resDate, confirmNum) {
+            document.getElementById('bookingForm').action = '?handler=Update';
+            document.getElementById('bookingModalTitle').textContent = 'Edit Booking';
+            document.getElementById('bookingSaveText').textContent = 'Update Booking';
+            document.getElementById('fBookingId').value = id;
+            document.getElementById('fBkUser').value = userId;
+            document.getElementById('fBkShow').value = showId;
+            document.getElementById('fBkTime').value = bookingTime;
+            document.getElementById('fBkResDate').value = resDate;
+            document.getElementById('fBkConfirm').value = confirmNum;
+        }
+    </script>
+}

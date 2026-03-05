@@ -10,6 +10,7 @@ builder.Services.AddScoped<MovieService>();
 builder.Services.AddScoped<TheaterService>();
 builder.Services.AddScoped<ScheduleService>();
 builder.Services.AddScoped<TicketService>();
+builder.Services.AddScoped<BookingService>();
 builder.Services.AddScoped<ReportService>();
 
 var app = builder.Build();

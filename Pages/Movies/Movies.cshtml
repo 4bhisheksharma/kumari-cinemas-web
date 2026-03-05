@@ -13,45 +13,28 @@
                 </h1>
                 <p class="text-secondary mb-0 small">Manage all movies currently in the system.</p>
             </div>
-            <button class="btn kc-btn-primary" data-bs-toggle="modal" data-bs-target="#movieModal">
+            <button class="btn kc-btn-primary" data-bs-toggle="modal" data-bs-target="#movieModal"
+                    onclick="openCreateMovie()">
                 <i class="fa-solid fa-plus me-1"></i>Add Movie
             </button>
         </div>
     </div>
 </div>
 
-<div class="kc-filter-bar">
-    <div class="container">
-        <div class="row g-2 align-items-center">
-            <div class="col-12 col-md-4">
-                <div class="input-group input-group-sm kc-search-group">
-                    <span class="input-group-text"><i class="fa-solid fa-search"></i></span>
-                    <input type="text" class="form-control kc-input" placeholder="Search movies...">
-                </div>
-            </div>
-            <div class="col-auto">
-                <select class="form-select form-select-sm kc-input">
-                    <option value="">All Genres</option>
-                    <option>Action</option>
-                    <option>Adventure</option>
-                    <option>Drama</option>
-                    <option>Family</option>
-                    <option>Romance</option>
-                    <option>Sci-Fi</option>
-                    <option>Thriller</option>
-                </select>
-            </div>
-            <div class="col-auto">
-                <select class="form-select form-select-sm kc-input">
-                    <option value="">All Statuses</option>
-                    <option>Active</option>
-                    <option>Upcoming</option>
-                    <option>Ended</option>
-                </select>
-            </div>
-        </div>
-    </div>
-</div>
+@if (TempData["Success"] != null)
+{
+    <div class="container"><div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+        <i class="fa-solid fa-check-circle me-1"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div></div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="container"><div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+        <i class="fa-solid fa-triangle-exclamation me-1"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div></div>
+}
 
 <section class="kc-section kc-section-dark" style="padding: 2rem 0 3rem;">
     <div class="container">
@@ -59,151 +42,142 @@
             <table class="table kc-table">
                 <thead>
                     <tr>
-                        <th style="width:3%">#</th>
+                        <th style="width:4%">ID</th>
                         <th>Title</th>
                         <th>Genre</th>
                         <th>Duration</th>
-                        <th>Certificate</th>
                         <th>Language</th>
-                        <th>Status</th>
+                        <th>Release Date</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>01</td>
-                        <td><strong>Everest's Call</strong></td>
-                        <td><span class="kc-tag">Adventure</span> <span class="kc-tag">Drama</span></td>
-                        <td>2h 18m</td>
-                        <td><span class="kc-cert-badge">PG-13</span></td>
-                        <td>Nepali</td>
-                        <td><span class="kc-status-badge kc-status-open">Active</span></td>
-                        <td class="text-end">
-                            <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
-                                    data-bs-target="#movieModal"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
-                                class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>02</td>
-                            <td><strong>Shadow Realm</strong></td>
-                            <td><span class="kc-tag">Thriller</span> <span class="kc-tag">Action</span></td>
-                            <td>2h 5m</td>
-                            <td><span class="kc-cert-badge">R</span></td>
-                            <td>English</td>
-                            <td><span class="kc-status-badge kc-status-open">Active</span></td>
-                            <td class="text-end">
-                                <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
-                                        data-bs-target="#movieModal"><i class="fa-solid fa-pen"></i></button>
-                                <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
-                                    class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
+                    @if (Model.Movies.Any())
+                    {
+                        @foreach (var movie in Model.Movies)
+                        {
                             <tr>
-                                <td>03</td>
-                                <td><strong>Kathmandu Nights</strong></td>
-                                <td><span class="kc-tag">Romance</span> <span class="kc-tag">Drama</span></td>
-                                <td>2h 0m</td>
-                                <td><span class="kc-cert-badge">PG</span></td>
-                                <td>Nepali</td>
-                                <td><span class="kc-status-badge kc-status-open">Active</span></td>
+                                <td class="text-muted small">@movie.MovieID</td>
+                                <td><strong class="text-white">@movie.Title</strong></td>
+                                <td>
+                                    @foreach (var g in movie.Genre.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                        <span class="kc-tag">@g</span>
+                                    }
+                                </td>
+                                <td>@movie.Duration min</td>
+                                <td>@movie.Language</td>
+                                <td>@(movie.ReleaseDate?.ToString("MMM d, yyyy") ?? "—")</td>
                                 <td class="text-end">
                                     <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
-                                            data-bs-target="#movieModal"><i class="fa-solid fa-pen"></i></button>
-                                    <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
-                                        class="fa-solid fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>04</td>
-                                    <td><strong>Star Odyssey</strong></td>
-                                    <td><span class="kc-tag">Sci-Fi</span> <span class="kc-tag">Adventure</span></td>
-                                    <td>2h 45m</td>
-                                    <td><span class="kc-cert-badge">PG-13</span></td>
-                                    <td>English</td>
-                                    <td><span class="kc-status-badge kc-status-filling">Upcoming</span></td>
-                                    <td class="text-end">
-                                        <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
-                                                data-bs-target="#movieModal"><i class="fa-solid fa-pen"></i></button>
-                                        <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
-                                            class="fa-solid fa-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
+                                            data-bs-target="#movieModal"
+                                            onclick="openEditMovie(@movie.MovieID,'@movie.Title.Replace("'","\\'")','@movie.Genre.Replace("'","\\'")','@movie.Duration','@movie.Language','@(movie.ReleaseDate?.ToString("yyyy-MM-dd") ?? "")')">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <form method="post" asp-page-handler="Delete" class="d-inline"
+                                          onsubmit="return confirm('Delete this movie?');">
+                                        <input type="hidden" name="DeleteId" value="@movie.MovieID" />
+                                        <button type="submit" class="btn btn-sm kc-btn-icon-danger" title="Delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <i class="fa-solid fa-film fa-2x mb-2 d-block"></i>
+                                No movies found. Click "Add Movie" to create one.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
 
-                @* ── ADD / EDIT MOVIE MODAL ─────────────────────────────── *@
-                <div class="modal fade kc-modal" id="movieModal" tabindex="-1" aria-labelledby="movieModalLabel">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title kc-gold" id="movieModalLabel">
-                                    <i class="fa-solid fa-film me-2"></i>Add New Movie
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body p-4">
-                                <form>
-                                    <div class="row g-3">
-                                        <div class="col-12">
-                                            <label class="form-label">Movie Title</label>
-                                            <input type="text" class="form-control kc-input" placeholder="Enter movie title">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Genre</label>
-                                            <select class="form-select kc-input">
-                                                <option value="">Select genre...</option>
-                                                <option>Action</option>
-                                                <option>Adventure</option>
-                                                <option>Drama</option>
-                                                <option>Family</option>
-                                                <option>Romance</option>
-                                                <option>Sci-Fi</option>
-                                                <option>Thriller</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Language</label>
-                                            <select class="form-select kc-input">
-                                                <option>Nepali</option>
-                                                <option>English</option>
-                                                <option>Hindi</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Duration</label>
-                                            <input type="text" class="form-control kc-input" placeholder="2h 15m">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Certificate</label>
-                                            <select class="form-select kc-input">
-                                                <option>PG</option>
-                                                <option>PG-13</option>
-                                                <option>R</option>
-                                                <option>G</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Status</label>
-                                            <select class="form-select kc-input">
-                                                <option>Active</option>
-                                                <option>Upcoming</option>
-                                                <option>Ended</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn kc-btn-outline btn-sm" data-bs-dismiss="modal">Cancel</button>
-                                <button type="button" class="btn kc-btn-primary btn-sm">
-                                    <i class="fa-solid fa-floppy-disk me-1"></i>Save Movie
-                                </button>
-                            </div>
+@* ── ADD / EDIT MOVIE MODAL ─────────────────────────────── *@
+<div class="modal fade kc-modal" id="movieModal" tabindex="-1" aria-labelledby="movieModalLabel">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title kc-gold" id="movieModalLabel">
+                    <i class="fa-solid fa-film me-2"></i><span id="movieModalTitle">Add New Movie</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" id="movieForm">
+                <div class="modal-body p-4">
+                    <input type="hidden" id="fMovieId" name="MovieInput.MovieID" value="0" />
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Movie Title</label>
+                            <input type="text" class="form-control kc-input" name="MovieInput.Title"
+                                   id="fMovieTitle" placeholder="Enter movie title" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Genre</label>
+                            <input type="text" class="form-control kc-input" name="MovieInput.Genre"
+                                   id="fMovieGenre" placeholder="Action, Drama">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Language</label>
+                            <select class="form-select kc-input" name="MovieInput.Language" id="fMovieLang">
+                                <option>Nepali</option>
+                                <option>English</option>
+                                <option>Hindi</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Duration (minutes)</label>
+                            <input type="number" class="form-control kc-input" name="MovieInput.Duration"
+                                   id="fMovieDuration" placeholder="135" min="1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Release Date</label>
+                            <input type="date" class="form-control kc-input" name="MovieInput.ReleaseDate"
+                                   id="fMovieRelease">
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn kc-btn-outline btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn kc-btn-primary btn-sm">
+                        <i class="fa-solid fa-floppy-disk me-1"></i><span id="movieSaveText">Save Movie</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function openCreateMovie() {
+        document.getElementById('movieForm').action = '?handler=Create';
+        document.getElementById('movieModalTitle').textContent = 'Add New Movie';
+        document.getElementById('movieSaveText').textContent = 'Save Movie';
+        document.getElementById('fMovieId').value = '0';
+        document.getElementById('fMovieTitle').value = '';
+        document.getElementById('fMovieGenre').value = '';
+        document.getElementById('fMovieDuration').value = '';
+        document.getElementById('fMovieLang').value = 'Nepali';
+        document.getElementById('fMovieRelease').value = '';
+    }
+    function openEditMovie(id, title, genre, duration, lang, release) {
+        document.getElementById('movieForm').action = '?handler=Update';
+        document.getElementById('movieModalTitle').textContent = 'Edit Movie';
+        document.getElementById('movieSaveText').textContent = 'Update Movie';
+        document.getElementById('fMovieId').value = id;
+        document.getElementById('fMovieTitle').value = title;
+        document.getElementById('fMovieGenre').value = genre;
+        document.getElementById('fMovieDuration').value = duration;
+        document.getElementById('fMovieLang').value = lang;
+        document.getElementById('fMovieRelease').value = release;
+    }
+</script>
+}

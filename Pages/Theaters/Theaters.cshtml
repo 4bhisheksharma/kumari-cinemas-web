@@ -1,7 +1,7 @@
 @page "/theaters"
 @model KumariCinemas.Web.Pages.Theaters.TheatersModel
 @{
-    ViewData["Title"] = "Theaters";
+    ViewData["Title"] = "Theatres";
 }
 
 <div class="kc-page-header">
@@ -9,260 +9,163 @@
         <div class="d-flex align-items-center justify-content-between py-4 flex-wrap gap-3">
             <div>
                 <h1 class="kc-dashboard-title mb-1">
-                    <i class="fa-solid fa-building me-2 kc-gold"></i>Theaters &amp; Halls
+                    <i class="fa-solid fa-building me-2 kc-gold"></i>Theatres
                 </h1>
-                <p class="text-secondary mb-0 small">Manage screens, seating capacity, and hall configurations.</p>
+                <p class="text-secondary mb-0 small">Manage cinema branches, locations and contact details.</p>
             </div>
-            <button class="btn kc-btn-primary" data-bs-toggle="modal" data-bs-target="#theaterModal">
-                <i class="fa-solid fa-plus me-1"></i>Add Theater
+            <button class="btn kc-btn-primary" data-bs-toggle="modal" data-bs-target="#theaterModal"
+                    onclick="openCreateTheater()">
+                <i class="fa-solid fa-plus me-1"></i>Add Theatre
             </button>
         </div>
     </div>
 </div>
 
+@if (TempData["Success"] != null)
+{
+    <div class="container"><div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+        <i class="fa-solid fa-check-circle me-1"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div></div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="container"><div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+        <i class="fa-solid fa-triangle-exclamation me-1"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div></div>
+}
+
 <section class="kc-section kc-section-dark" style="padding: 2rem 0 3rem;">
     <div class="container">
-        <div class="row g-4">
+        <div class="table-responsive">
+            <table class="table kc-table">
+                <thead>
+                    <tr>
+                        <th style="width:4%">ID</th>
+                        <th>Theatre Name</th>
+                        <th>City</th>
+                        <th>Address</th>
+                        <th>Contact</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Theaters.Any())
+                    {
+                        @foreach (var t in Model.Theaters)
+                        {
+                            <tr>
+                                <td class="text-muted small">@t.TheatreID</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="kc-avatar">@t.TheatreName[0]</div>
+                                        <strong class="text-white">@t.TheatreName</strong>
+                                    </div>
+                                </td>
+                                <td>@t.TheatreCity</td>
+                                <td class="text-secondary">@(string.IsNullOrEmpty(t.TheatreAddress) ? "—" : t.TheatreAddress)</td>
+                                <td>@(string.IsNullOrEmpty(t.TheatreContactNumber) ? "—" : t.TheatreContactNumber)</td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                            data-bs-target="#theaterModal"
+                                            onclick="openEditTheater(@t.TheatreID,'@t.TheatreName.Replace("'","\\'")','@t.TheatreCity.Replace("'","\\'")','@t.TheatreAddress.Replace("'","\\'")','@t.TheatreContactNumber.Replace("'","\\'")' )">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <form method="post" asp-page-handler="Delete" class="d-inline"
+                                          onsubmit="return confirm('Delete this theatre?');">
+                                        <input type="hidden" name="DeleteId" value="@t.TheatreID" />
+                                        <button type="submit" class="btn btn-sm kc-btn-icon-danger" title="Delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <i class="fa-solid fa-building fa-2x mb-2 d-block"></i>
+                                No theatres found. Click "Add Theatre" to create one.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
 
-            <div class="col-md-6 col-lg-4">
-                <div class="kc-theater-card">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div>
-                            <h5 class="mb-0 text-white">Screen 1</h5>
-                            <span class="text-secondary small">Hall A</span>
+@* ── ADD / EDIT THEATRE MODAL ─────────────────────────────── *@
+<div class="modal fade kc-modal" id="theaterModal" tabindex="-1" aria-labelledby="theaterModalLabel">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title kc-gold" id="theaterModalLabel">
+                    <i class="fa-solid fa-building me-2"></i><span id="theaterModalTitle">Add New Theatre</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" id="theaterForm">
+                <div class="modal-body p-4">
+                    <input type="hidden" id="fTheatreId" name="TheaterInput.TheatreID" value="0" />
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Theatre Name</label>
+                            <input type="text" class="form-control kc-input" name="TheaterInput.TheatreName"
+                                   id="fTheatreName" placeholder="e.g. Kumari Cinemas Kathmandu" required>
                         </div>
-                        <span class="kc-type-badge kc-type-standard">Standard</span>
-                    </div>
-                    <div class="row g-2 mb-3">
-                        <div class="col-6">
-                            <div>
-                                <div class="kc-theater-stat-val">120</div>
-                                <div class="kc-theater-stat-lbl">Total Seats</div>
-                            </div>
+                        <div class="col-md-6">
+                            <label class="form-label">City</label>
+                            <input type="text" class="form-control kc-input" name="TheaterInput.TheatreCity"
+                                   id="fTheatreCity" placeholder="e.g. Kathmandu" required>
                         </div>
-                        <div class="col-6">
-                            <div>
-                                <div class="kc-theater-stat-val">12 × 10</div>
-                                <div class="kc-theater-stat-lbl">Layout (R × C)</div>
-                            </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Contact Number</label>
+                            <input type="tel" class="form-control kc-input" name="TheaterInput.TheatreContactNumber"
+                                   id="fTheatreContact" placeholder="01-XXXXXXX">
                         </div>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-between pt-2"
-                         style="border-top: 1px solid var(--kc-border)">
-                        <span class="kc-status-badge kc-status-open">Active</span>
-                        <div>
-                            <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
-                                    data-bs-target="#theaterModal"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
-                                class="fa-solid fa-trash"></i></button>
-                            </div>
+                        <div class="col-12">
+                            <label class="form-label">Address</label>
+                            <input type="text" class="form-control kc-input" name="TheaterInput.TheatreAddress"
+                                   id="fTheatreAddress" placeholder="Street address, area">
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn kc-btn-outline btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn kc-btn-primary btn-sm">
+                        <i class="fa-solid fa-floppy-disk me-1"></i><span id="theaterSaveText">Save Theatre</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-                <div class="col-md-6 col-lg-4">
-                    <div class="kc-theater-card">
-                        <div class="d-flex align-items-start justify-content-between mb-3">
-                            <div>
-                                <h5 class="mb-0 text-white">Screen 2</h5>
-                                <span class="text-secondary small">Hall B</span>
-                            </div>
-                            <span class="kc-type-badge kc-type-standard">Standard</span>
-                        </div>
-                        <div class="row g-2 mb-3">
-                            <div class="col-6">
-                                <div>
-                                    <div class="kc-theater-stat-val">100</div>
-                                    <div class="kc-theater-stat-lbl">Total Seats</div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div>
-                                    <div class="kc-theater-stat-val">10 × 10</div>
-                                    <div class="kc-theater-stat-lbl">Layout (R × C)</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between pt-2"
-                             style="border-top: 1px solid var(--kc-border)">
-                            <span class="kc-status-badge kc-status-open">Active</span>
-                            <div>
-                                <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
-                                        data-bs-target="#theaterModal"><i class="fa-solid fa-pen"></i></button>
-                                <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
-                                    class="fa-solid fa-trash"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 col-lg-4">
-                        <div class="kc-theater-card">
-                            <div class="d-flex align-items-start justify-content-between mb-3">
-                                <div>
-                                    <h5 class="mb-0 text-white">Screen 3</h5>
-                                    <span class="text-secondary small">Hall C</span>
-                                </div>
-                                <span class="kc-type-badge kc-type-premium">Premium</span>
-                            </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-6">
-                                    <div>
-                                        <div class="kc-theater-stat-val">80</div>
-                                        <div class="kc-theater-stat-lbl">Total Seats</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div>
-                                        <div class="kc-theater-stat-val">8 × 10</div>
-                                        <div class="kc-theater-stat-lbl">Layout (R × C)</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between pt-2"
-                                 style="border-top: 1px solid var(--kc-border)">
-                                <span class="kc-status-badge kc-status-open">Active</span>
-                                <div>
-                                    <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
-                                            data-bs-target="#theaterModal"><i class="fa-solid fa-pen"></i></button>
-                                    <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
-                                        class="fa-solid fa-trash"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 col-lg-4">
-                            <div class="kc-theater-card">
-                                <div class="d-flex align-items-start justify-content-between mb-3">
-                                    <div>
-                                        <h5 class="mb-0 text-white">Screen 4</h5>
-                                        <span class="text-secondary small">Hall D</span>
-                                    </div>
-                                    <span class="kc-type-badge kc-type-imax">IMAX</span>
-                                </div>
-                                <div class="row g-2 mb-3">
-                                    <div class="col-6">
-                                        <div>
-                                            <div class="kc-theater-stat-val">150</div>
-                                            <div class="kc-theater-stat-lbl">Total Seats</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div>
-                                            <div class="kc-theater-stat-val">15 × 10</div>
-                                            <div class="kc-theater-stat-lbl">Layout (R × C)</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-between pt-2"
-                                     style="border-top: 1px solid var(--kc-border)">
-                                    <span class="kc-status-badge kc-status-open">Active</span>
-                                    <div>
-                                        <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
-                                                data-bs-target="#theaterModal"><i class="fa-solid fa-pen"></i></button>
-                                        <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
-                                            class="fa-solid fa-trash"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 col-lg-4">
-                                <div class="kc-theater-card">
-                                    <div class="d-flex align-items-start justify-content-between mb-3">
-                                        <div>
-                                            <h5 class="mb-0 text-white">Screen 5</h5>
-                                            <span class="text-secondary small">Hall E</span>
-                                        </div>
-                                        <span class="kc-type-badge kc-type-4dx">4DX</span>
-                                    </div>
-                                    <div class="row g-2 mb-3">
-                                        <div class="col-6">
-                                            <div>
-                                                <div class="kc-theater-stat-val">60</div>
-                                                <div class="kc-theater-stat-lbl">Total Seats</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div>
-                                                <div class="kc-theater-stat-val">6 × 10</div>
-                                                <div class="kc-theater-stat-lbl">Layout (R × C)</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between pt-2"
-                                         style="border-top: 1px solid var(--kc-border)">
-                                        <span class="kc-status-badge kc-status-maintenance">Maintenance</span>
-                                        <div>
-                                            <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
-                                                    data-bs-target="#theaterModal"><i class="fa-solid fa-pen"></i></button>
-                                            <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
-                                                class="fa-solid fa-trash"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </section>
-
-                    @* ── ADD / EDIT THEATER MODAL ─────────────────────────────── *@
-                    <div class="modal fade kc-modal" id="theaterModal" tabindex="-1" aria-labelledby="theaterModalLabel">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title kc-gold" id="theaterModalLabel">
-                                        <i class="fa-solid fa-building me-2"></i>Add New Theater
-                                    </h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body p-4">
-                                    <form>
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <label class="form-label">Screen Name</label>
-                                                <input type="text" class="form-control kc-input" placeholder="e.g. Screen 6">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label">Hall Name</label>
-                                                <input type="text" class="form-control kc-input" placeholder="e.g. Hall F">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label class="form-label">Type</label>
-                                                <select class="form-select kc-input">
-                                                    <option>Standard</option>
-                                                    <option>Premium</option>
-                                                    <option>IMAX</option>
-                                                    <option>4DX</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label class="form-label">Rows</label>
-                                                <input type="number" class="form-control kc-input" placeholder="10">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label class="form-label">Columns</label>
-                                                <input type="number" class="form-control kc-input" placeholder="12">
-                                            </div>
-                                            <div class="col-12">
-                                                <label class="form-label">Status</label>
-                                                <select class="form-select kc-input">
-                                                    <option>Active</option>
-                                                    <option>Maintenance</option>
-                                                    <option>Inactive</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn kc-btn-outline btn-sm" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="button" class="btn kc-btn-primary btn-sm">
-                                        <i class="fa-solid fa-floppy-disk me-1"></i>Save Theater
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+@section Scripts {
+<script>
+    function openCreateTheater() {
+        document.getElementById('theaterForm').action = '?handler=Create';
+        document.getElementById('theaterModalTitle').textContent = 'Add New Theatre';
+        document.getElementById('theaterSaveText').textContent = 'Save Theatre';
+        document.getElementById('fTheatreId').value = '0';
+        document.getElementById('fTheatreName').value = '';
+        document.getElementById('fTheatreCity').value = '';
+        document.getElementById('fTheatreContact').value = '';
+        document.getElementById('fTheatreAddress').value = '';
+    }
+    function openEditTheater(id, name, city, address, contact) {
+        document.getElementById('theaterForm').action = '?handler=Update';
+        document.getElementById('theaterModalTitle').textContent = 'Edit Theatre';
+        document.getElementById('theaterSaveText').textContent = 'Update Theatre';
+        document.getElementById('fTheatreId').value = id;
+        document.getElementById('fTheatreName').value = name;
+        document.getElementById('fTheatreCity').value = city;
+        document.getElementById('fTheatreAddress').value = address;
+        document.getElementById('fTheatreContact').value = contact;
+    }
+</script>
+}

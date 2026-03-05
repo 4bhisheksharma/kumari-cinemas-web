@@ -1,11 +1,18 @@
 public class Ticket
 {
     public int TicketID { get; set; }
-    public string RefNumber { get; set; } = string.Empty;
+    public int BookingID { get; set; }
+    public int SeatID { get; set; }
+    public int PriceID { get; set; }
+    public string TicketNumber { get; set; } = string.Empty;
+    public string TicketStatus { get; set; } = "Booked";
+    // Display fields populated from JOINs
     public string MovieTitle { get; set; } = string.Empty;
-    public DateTime ShowDateTime { get; set; }
-    public string ScreenName { get; set; } = string.Empty;
-    public string Seats { get; set; } = string.Empty;
+    public string SeatRow { get; set; } = string.Empty;
+    public int SeatNumber { get; set; }
     public decimal Amount { get; set; }
-    public string Status { get; set; } = "Confirmed";
+    public string HallName { get; set; } = string.Empty;
+    public DateTime ShowDate { get; set; }
+    public string UserName { get; set; } = string.Empty;
+    public string ConfirmationNumber { get; set; } = string.Empty;
 }

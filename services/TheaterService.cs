@@ -18,21 +18,18 @@ public class TheaterService
         using var conn = _dbHelper.GetConnection();
         conn.Open();
         using var cmd = new OracleCommand(
-            "SELECT TheaterID, ScreenName, HallName, TheaterType, SeatRows, SeatColumns, TotalSeats, Status FROM TheaterTable ORDER BY TheaterID", conn);
+            "SELECT TheatreID, TheatreName, TheatreCity, TheatreAddress, TheatreContactNumber FROM Theatre ORDER BY TheatreID", conn);
         using var reader = cmd.ExecuteReader();
 
         while (reader.Read())
         {
             theaters.Add(new Theater
             {
-                TheaterID = reader.GetInt32(0),
-                ScreenName = reader.GetString(1),
-                HallName = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
-                TheaterType = reader.IsDBNull(3) ? "Standard" : reader.GetString(3),
-                SeatRows = reader.IsDBNull(4) ? 0 : reader.GetInt32(4),
-                SeatColumns = reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
-                TotalSeats = reader.IsDBNull(6) ? 0 : reader.GetInt32(6),
-                Status = reader.IsDBNull(7) ? "Active" : reader.GetString(7)
+                TheatreID = reader.GetInt32(0),
+                TheatreName = reader.GetString(1),
+                TheatreCity = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
+                TheatreAddress = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
+                TheatreContactNumber = reader.IsDBNull(4) ? string.Empty : reader.GetString(4)
             });
         }
 
@@ -44,14 +41,12 @@ public class TheaterService
         using var conn = _dbHelper.GetConnection();
         conn.Open();
         using var cmd = new OracleCommand(
-            "INSERT INTO TheaterTable (ScreenName, HallName, TheaterType, SeatRows, SeatColumns, TotalSeats, Status) VALUES (:screen, :hall, :type, :rows, :cols, :total, :status)", conn);
-        cmd.Parameters.Add(new OracleParameter("screen", theater.ScreenName));
-        cmd.Parameters.Add(new OracleParameter("hall", theater.HallName));
-        cmd.Parameters.Add(new OracleParameter("type", theater.TheaterType));
-        cmd.Parameters.Add(new OracleParameter("rows", theater.SeatRows));
-        cmd.Parameters.Add(new OracleParameter("cols", theater.SeatColumns));
-        cmd.Parameters.Add(new OracleParameter("total", theater.TotalSeats));
-        cmd.Parameters.Add(new OracleParameter("status", theater.Status));
+            @"INSERT INTO Theatre (TheatreID, TheatreName, TheatreCity, TheatreAddress, TheatreContactNumber) 
+              VALUES ((SELECT NVL(MAX(TheatreID),0)+1 FROM Theatre), :name, :city, :address, :contact)", conn);
+        cmd.Parameters.Add(new OracleParameter("name", theater.TheatreName));
+        cmd.Parameters.Add(new OracleParameter("city", theater.TheatreCity));
+        cmd.Parameters.Add(new OracleParameter("address", theater.TheatreAddress));
+        cmd.Parameters.Add(new OracleParameter("contact", theater.TheatreContactNumber));
         cmd.ExecuteNonQuery();
     }
 
@@ -60,24 +55,22 @@ public class TheaterService
         using var conn = _dbHelper.GetConnection();
         conn.Open();
         using var cmd = new OracleCommand(
-            "UPDATE TheaterTable SET ScreenName = :screen, HallName = :hall, TheaterType = :type, SeatRows = :rows, SeatColumns = :cols, TotalSeats = :total, Status = :status WHERE TheaterID = :id", conn);
-        cmd.Parameters.Add(new OracleParameter("screen", theater.ScreenName));
-        cmd.Parameters.Add(new OracleParameter("hall", theater.HallName));
-        cmd.Parameters.Add(new OracleParameter("type", theater.TheaterType));
-        cmd.Parameters.Add(new OracleParameter("rows", theater.SeatRows));
-        cmd.Parameters.Add(new OracleParameter("cols", theater.SeatColumns));
-        cmd.Parameters.Add(new OracleParameter("total", theater.TotalSeats));
-        cmd.Parameters.Add(new OracleParameter("status", theater.Status));
-        cmd.Parameters.Add(new OracleParameter("id", theater.TheaterID));
+            @"UPDATE Theatre SET TheatreName = :name, TheatreCity = :city, TheatreAddress = :address, 
+              TheatreContactNumber = :contact WHERE TheatreID = :id", conn);
+        cmd.Parameters.Add(new OracleParameter("name", theater.TheatreName));
+        cmd.Parameters.Add(new OracleParameter("city", theater.TheatreCity));
+        cmd.Parameters.Add(new OracleParameter("address", theater.TheatreAddress));
+        cmd.Parameters.Add(new OracleParameter("contact", theater.TheatreContactNumber));
+        cmd.Parameters.Add(new OracleParameter("id", theater.TheatreID));
         cmd.ExecuteNonQuery();
     }
 
-    public void DeleteTheater(int theaterId)
+    public void DeleteTheater(int theatreId)
     {
         using var conn = _dbHelper.GetConnection();
         conn.Open();
-        using var cmd = new OracleCommand("DELETE FROM TheaterTable WHERE TheaterID = :id", conn);
-        cmd.Parameters.Add(new OracleParameter("id", theaterId));
+        using var cmd = new OracleCommand("DELETE FROM Theatre WHERE TheatreID = :id", conn);
+        cmd.Parameters.Add(new OracleParameter("id", theatreId));
         cmd.ExecuteNonQuery();
     }
 }

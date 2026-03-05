@@ -11,49 +11,34 @@
                 <h1 class="kc-dashboard-title mb-1">
                     <i class="fa-solid fa-ticket me-2 kc-gold"></i>Ticket Oversight
                 </h1>
-                <p class="text-secondary mb-0 small">View and monitor all ticket bookings across shows.</p>
+                <p class="text-secondary mb-0 small">View and manage all ticket bookings across shows.</p>
             </div>
-            <div class="d-flex gap-2">
-                <button class="btn kc-btn-outline btn-sm">
-                    <i class="fa-solid fa-file-export me-1"></i>Export
-                </button>
-            </div>
+            <button class="btn kc-btn-primary" data-bs-toggle="modal" data-bs-target="#ticketModal"
+                    onclick="openCreateTicket()">
+                <i class="fa-solid fa-plus me-1"></i>Add Ticket
+            </button>
         </div>
     </div>
 </div>
 
-<div class="kc-filter-bar">
+@if (TempData["Success"] != null)
+{
     <div class="container">
-        <div class="row g-2 align-items-center">
-            <div class="col-12 col-md-3">
-                <div class="input-group input-group-sm kc-search-group">
-                    <span class="input-group-text"><i class="fa-solid fa-search"></i></span>
-                    <input type="text" class="form-control kc-input" placeholder="Search by ref. no. or movie...">
-                </div>
-            </div>
-            <div class="col-auto">
-                <select class="form-select form-select-sm kc-input">
-                    <option value="">All Movies</option>
-                    <option>Everest's Call</option>
-                    <option>Shadow Realm</option>
-                    <option>Kathmandu Nights</option>
-                    <option>Star Odyssey</option>
-                </select>
-            </div>
-            <div class="col-auto">
-                <input type="date" class="form-control form-control-sm kc-input" value="2026-03-04">
-            </div>
-            <div class="col-auto">
-                <select class="form-select form-select-sm kc-input">
-                    <option value="">All Statuses</option>
-                    <option>Confirmed</option>
-                    <option>Cancelled</option>
-                    <option>Expired</option>
-                </select>
-            </div>
+        <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+            <i class="fa-solid fa-check-circle me-1"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     </div>
-</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="container">
+        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-1"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
 
 <section class="kc-section kc-section-dark" style="padding: 2rem 0 3rem;">
     <div class="container">
@@ -61,107 +46,164 @@
             <table class="table kc-table">
                 <thead>
                     <tr>
-                        <th>Ref. No.</th>
+                        <th>Ticket #</th>
+                        <th>Confirmation</th>
+                        <th>User</th>
                         <th>Movie</th>
-                        <th>Show Date &amp; Time</th>
-                        <th>Screen</th>
-                        <th>Seat(s)</th>
+                        <th>Hall</th>
+                        <th>Seat</th>
+                        <th>Date</th>
                         <th>Amount</th>
                         <th>Status</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="kc-gold small fw-bold">KC-241001</td>
-                        <td><strong class="text-white">Everest's Call</strong></td>
-                        <td>Mar 4, 2026 &mdash; 10:00 AM</td>
-                        <td>Screen 1</td>
-                        <td><span class="kc-tag">A5</span> <span class="kc-tag">A6</span></td>
-                        <td>Rs. 600</td>
-                        <td><span class="kc-status-badge kc-status-open">Confirmed</span></td>
-                    </tr>
-                    <tr>
-                        <td class="kc-gold small fw-bold">KC-241002</td>
-                        <td><strong class="text-white">Shadow Realm</strong></td>
-                        <td>Mar 4, 2026 &mdash; 11:15 AM</td>
-                        <td>Screen 2</td>
-                        <td><span class="kc-tag">C3</span> <span class="kc-tag">C4</span> <span class="kc-tag">C5</span>
-                            <span class="kc-tag">C6</span>
-                        </td>
-                        <td>Rs. 1,400</td>
-                        <td><span class="kc-status-badge kc-status-open">Confirmed</span></td>
-                    </tr>
-                    <tr>
-                        <td class="kc-gold small fw-bold">KC-241003</td>
-                        <td><strong class="text-white">Kathmandu Nights</strong></td>
-                        <td>Mar 4, 2026 &mdash; 12:00 PM</td>
-                        <td>Screen 3</td>
-                        <td><span class="kc-tag">B2</span></td>
-                        <td>Rs. 350</td>
-                        <td><span class="kc-status-badge kc-status-cancelled">Cancelled</span></td>
-                    </tr>
-                    <tr>
-                        <td class="kc-gold small fw-bold">KC-241004</td>
-                        <td><strong class="text-white">Star Odyssey</strong></td>
-                        <td>Mar 4, 2026 &mdash; 1:30 PM</td>
-                        <td>Screen 4</td>
-                        <td><span class="kc-tag">D1</span> <span class="kc-tag">D2</span></td>
-                        <td>Rs. 900</td>
-                        <td><span class="kc-status-badge kc-status-open">Confirmed</span></td>
-                    </tr>
-                    <tr>
-                        <td class="kc-gold small fw-bold">KC-241005</td>
-                        <td><strong class="text-white">Everest's Call</strong></td>
-                        <td>Mar 4, 2026 &mdash; 2:30 PM</td>
-                        <td>Screen 1</td>
-                        <td><span class="kc-tag">F7</span></td>
-                        <td>Rs. 300</td>
-                        <td><span class="kc-status-badge kc-status-open">Confirmed</span></td>
-                    </tr>
-                    <tr>
-                        <td class="kc-gold small fw-bold">KC-241006</td>
-                        <td><strong class="text-white">Shadow Realm</strong></td>
-                        <td>Mar 4, 2026 &mdash; 3:45 PM</td>
-                        <td>Screen 2</td>
-                        <td><span class="kc-tag">E4</span> <span class="kc-tag">E5</span></td>
-                        <td>Rs. 700</td>
-                        <td><span class="kc-status-badge kc-status-open">Confirmed</span></td>
-                    </tr>
-                    <tr>
-                        <td class="kc-gold small fw-bold">KC-241007</td>
-                        <td><strong class="text-white">Star Odyssey</strong></td>
-                        <td>Mar 4, 2026 &mdash; 6:00 PM</td>
-                        <td>Screen 4</td>
-                        <td><span class="kc-tag">G1</span> <span class="kc-tag">G2</span> <span class="kc-tag">G3</span>
-                        </td>
-                        <td>Rs. 1,350</td>
-                        <td><span class="kc-status-badge kc-status-open">Confirmed</span></td>
-                    </tr>
-                    <tr>
-                        <td class="kc-gold small fw-bold">KC-241008</td>
-                        <td><strong class="text-white">Kathmandu Nights</strong></td>
-                        <td>Mar 3, 2026 &mdash; 7:00 PM</td>
-                        <td>Screen 3</td>
-                        <td><span class="kc-tag">H8</span></td>
-                        <td>Rs. 350</td>
-                        <td><span class="kc-status-badge kc-status-expired">Expired</span></td>
-                    </tr>
+                    @if (Model.Tickets.Any())
+                    {
+                        @foreach (var t in Model.Tickets)
+                        {
+                            var tStatusClass = t.TicketStatus switch
+                            {
+                                "Cancelled" => "kc-status-cancelled",
+                                "Paid" => "kc-status-open",
+                                _ => "kc-status-filling"
+                            };
+                            <tr>
+                                <td class="kc-gold small fw-bold">@t.TicketNumber</td>
+                                <td class="text-secondary small">@t.ConfirmationNumber</td>
+                                <td>@t.UserName</td>
+                                <td><strong class="text-white">@t.MovieTitle</strong></td>
+                                <td>@t.HallName</td>
+                                <td><span class="kc-tag">@t.SeatRow@t.SeatNumber</span></td>
+                                <td>@(t.ShowDate == DateTime.MinValue ? "—" : t.ShowDate.ToString("MMM d, yyyy"))</td>
+                                <td>Rs. @t.Amount.ToString("N0")</td>
+                                <td><span class="kc-status-badge @tStatusClass">@t.TicketStatus</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                            data-bs-target="#ticketModal"
+                                            onclick="openEditTicket(@t.TicketID, @t.BookingID, @t.SeatID, @t.PriceID, '@t.TicketNumber', '@t.TicketStatus')">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <form method="post" asp-page-handler="Delete" class="d-inline"
+                                          onsubmit="return confirm('Delete this ticket?');">
+                                        <input type="hidden" name="DeleteId" value="@t.TicketID" />
+                                        <button type="submit" class="btn btn-sm kc-btn-icon-danger" title="Delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="10" class="text-center text-muted py-4">
+                                <i class="fa-solid fa-ticket fa-2x mb-2 d-block"></i>
+                                No tickets found. Click "Add Ticket" to create one.
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
+    </div>
+</section>
 
-        <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
-            <p class="text-secondary small mb-0">Showing 8 of 1,642 tickets</p>
-            <nav>
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled"><a class="page-link kc-input" href="#">&laquo;</a></li>
-                    <li class="page-item active"><a class="page-link" href="#"
-                                                        style="background:var(--kc-gold);border-color:var(--kc-gold);color:#000;">1</a></li>
-                        <li class="page-item"><a class="page-link kc-input" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link kc-input" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link kc-input" href="#">&raquo;</a></li>
-                    </ul>
-                </nav>
+@* ── ADD / EDIT TICKET MODAL ─────────────────────────────── *@
+<div class="modal fade kc-modal" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title kc-gold" id="ticketModalLabel">
+                    <i class="fa-solid fa-ticket me-2"></i><span id="ticketModalTitle">Add New Ticket</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
+            <form method="post" id="ticketForm">
+                <div class="modal-body p-4">
+                    <input type="hidden" id="fTicketId" name="TicketInput.TicketID" value="0" />
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Booking</label>
+                            <select class="form-select kc-input" name="TicketInput.BookingID" id="fTktBooking" required>
+                                <option value="">-- Select Booking --</option>
+                                @foreach (var b in Model.BookingOptions)
+                                {
+                                    <option value="@b.Value">@b.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Seat</label>
+                            <select class="form-select kc-input" name="TicketInput.SeatID" id="fTktSeat" required>
+                                <option value="">-- Select Seat --</option>
+                                @foreach (var s in Model.SeatOptions)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Pricing</label>
+                            <select class="form-select kc-input" name="TicketInput.PriceID" id="fTktPrice" required>
+                                <option value="">-- Select Price --</option>
+                                @foreach (var p in Model.PricingOptions)
+                                {
+                                    <option value="@p.Value">@p.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ticket Number</label>
+                            <input type="text" class="form-control kc-input" name="TicketInput.TicketNumber"
+                                   id="fTktNumber" placeholder="TKT-001" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Status</label>
+                            <select class="form-select kc-input" name="TicketInput.TicketStatus" id="fTktStatus">
+                                <option>Booked</option>
+                                <option>Cancelled</option>
+                                <option>Paid</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn kc-btn-outline btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn kc-btn-primary btn-sm">
+                        <i class="fa-solid fa-floppy-disk me-1"></i><span id="ticketSaveText">Save Ticket</span>
+                    </button>
+                </div>
+            </form>
         </div>
-    </section>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openCreateTicket() {
+            document.getElementById('ticketForm').action = '?handler=Create';
+            document.getElementById('ticketModalTitle').textContent = 'Add New Ticket';
+            document.getElementById('ticketSaveText').textContent = 'Save Ticket';
+            document.getElementById('fTicketId').value = '0';
+            document.getElementById('fTktBooking').value = '';
+            document.getElementById('fTktSeat').value = '';
+            document.getElementById('fTktPrice').value = '';
+            document.getElementById('fTktNumber').value = '';
+            document.getElementById('fTktStatus').value = 'Booked';
+        }
+        function openEditTicket(id, bookingId, seatId, priceId, ticketNum, status) {
+            document.getElementById('ticketForm').action = '?handler=Update';
+            document.getElementById('ticketModalTitle').textContent = 'Edit Ticket';
+            document.getElementById('ticketSaveText').textContent = 'Update Ticket';
+            document.getElementById('fTicketId').value = id;
+            document.getElementById('fTktBooking').value = bookingId;
+            document.getElementById('fTktSeat').value = seatId;
+            document.getElementById('fTktPrice').value = priceId;
+            document.getElementById('fTktNumber').value = ticketNum;
+            document.getElementById('fTktStatus').value = status;
+        }
+    </script>
+}

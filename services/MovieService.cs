@@ -18,7 +18,7 @@ public class MovieService
         using var conn = _dbHelper.GetConnection();
         conn.Open();
         using var cmd = new OracleCommand(
-            "SELECT MovieID, Title, Genre, Duration, Certificate, Language, Status FROM MovieTable ORDER BY MovieID", conn);
+            "SELECT MovieID, Title, Duration, Genre, Language, ReleaseDate FROM Movie ORDER BY MovieID", conn);
         using var reader = cmd.ExecuteReader();
 
         while (reader.Read())
@@ -27,11 +27,10 @@ public class MovieService
             {
                 MovieID = reader.GetInt32(0),
                 Title = reader.GetString(1),
-                Genre = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
-                Duration = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
-                Certificate = reader.IsDBNull(4) ? string.Empty : reader.GetString(4),
-                Language = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
-                Status = reader.IsDBNull(6) ? "Active" : reader.GetString(6)
+                Duration = reader.IsDBNull(2) ? 0 : reader.GetInt32(2),
+                Genre = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
+                Language = reader.IsDBNull(4) ? string.Empty : reader.GetString(4),
+                ReleaseDate = reader.IsDBNull(5) ? null : reader.GetDateTime(5)
             });
         }
 
@@ -43,13 +42,13 @@ public class MovieService
         using var conn = _dbHelper.GetConnection();
         conn.Open();
         using var cmd = new OracleCommand(
-            "INSERT INTO MovieTable (Title, Genre, Duration, Certificate, Language, Status) VALUES (:title, :genre, :duration, :cert, :lang, :status)", conn);
+            @"INSERT INTO Movie (MovieID, Title, Duration, Genre, Language, ReleaseDate) 
+              VALUES ((SELECT NVL(MAX(MovieID),0)+1 FROM Movie), :title, :duration, :genre, :lang, :releaseDate)", conn);
         cmd.Parameters.Add(new OracleParameter("title", movie.Title));
-        cmd.Parameters.Add(new OracleParameter("genre", movie.Genre));
         cmd.Parameters.Add(new OracleParameter("duration", movie.Duration));
-        cmd.Parameters.Add(new OracleParameter("cert", movie.Certificate));
+        cmd.Parameters.Add(new OracleParameter("genre", movie.Genre));
         cmd.Parameters.Add(new OracleParameter("lang", movie.Language));
-        cmd.Parameters.Add(new OracleParameter("status", movie.Status));
+        cmd.Parameters.Add(new OracleParameter("releaseDate", (object?)movie.ReleaseDate ?? DBNull.Value));
         cmd.ExecuteNonQuery();
     }
 
@@ -58,13 +57,13 @@ public class MovieService
         using var conn = _dbHelper.GetConnection();
         conn.Open();
         using var cmd = new OracleCommand(
-            "UPDATE MovieTable SET Title = :title, Genre = :genre, Duration = :duration, Certificate = :cert, Language = :lang, Status = :status WHERE MovieID = :id", conn);
+            @"UPDATE Movie SET Title = :title, Duration = :duration, Genre = :genre, 
+              Language = :lang, ReleaseDate = :releaseDate WHERE MovieID = :id", conn);
         cmd.Parameters.Add(new OracleParameter("title", movie.Title));
-        cmd.Parameters.Add(new OracleParameter("genre", movie.Genre));
         cmd.Parameters.Add(new OracleParameter("duration", movie.Duration));
-        cmd.Parameters.Add(new OracleParameter("cert", movie.Certificate));
+        cmd.Parameters.Add(new OracleParameter("genre", movie.Genre));
         cmd.Parameters.Add(new OracleParameter("lang", movie.Language));
-        cmd.Parameters.Add(new OracleParameter("status", movie.Status));
+        cmd.Parameters.Add(new OracleParameter("releaseDate", (object?)movie.ReleaseDate ?? DBNull.Value));
         cmd.Parameters.Add(new OracleParameter("id", movie.MovieID));
         cmd.ExecuteNonQuery();
     }
@@ -73,7 +72,7 @@ public class MovieService
     {
         using var conn = _dbHelper.GetConnection();
         conn.Open();
-        using var cmd = new OracleCommand("DELETE FROM MovieTable WHERE MovieID = :id", conn);
+        using var cmd = new OracleCommand("DELETE FROM Movie WHERE MovieID = :id", conn);
         cmd.Parameters.Add(new OracleParameter("id", movieId));
         cmd.ExecuteNonQuery();
     }

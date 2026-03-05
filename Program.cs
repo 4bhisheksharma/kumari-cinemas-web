@@ -6,6 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<DatabaseConnHelper>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<MovieService>();
+builder.Services.AddScoped<TheaterService>();
+builder.Services.AddScoped<ScheduleService>();
+builder.Services.AddScoped<TicketService>();
 
 var app = builder.Build();
 

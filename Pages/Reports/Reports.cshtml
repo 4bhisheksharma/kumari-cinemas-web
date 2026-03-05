@@ -1,0 +1,242 @@
+@page "/reports"
+@model KumariCinemas.Web.Pages.Reports.ReportsModel
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<div class="kc-page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between py-4 flex-wrap gap-3">
+            <div>
+                <h1 class="kc-dashboard-title mb-1">
+                    <i class="fa-solid fa-chart-bar me-2 kc-gold"></i>Performance Reports
+                </h1>
+                <p class="text-secondary mb-0 small">Ticket sales, occupancy, and revenue analytics.</p>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+                <select class="form-select form-select-sm kc-input" style="width:auto;">
+                    <option>This Month (March 2026)</option>
+                    <option>Last Month (Feb 2026)</option>
+                    <option>Last 3 Months</option>
+                    <option>This Year</option>
+                </select>
+                <button class="btn kc-btn-outline btn-sm">
+                    <i class="fa-solid fa-file-export me-1"></i>Export
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* SUMMARY STATS *@
+<section class="kc-section kc-section-dark py-4">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-6 col-lg-3">
+                <div class="kc-stat-card">
+                    <div class="kc-stat-icon kc-icon-gold"><i class="fa-solid fa-sack-dollar"></i></div>
+                    <div class="kc-stat-body">
+                        <span class="kc-stat-value">Rs. 4.85L</span>
+                        <span class="kc-stat-label">Total Revenue</span>
+                        <span class="small" style="color:#34d399; margin-top:2px;">&#9650; 12% vs last month</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="kc-stat-card">
+                    <div class="kc-stat-icon kc-icon-blue"><i class="fa-solid fa-ticket"></i></div>
+                    <div class="kc-stat-body">
+                        <span class="kc-stat-value">1,642</span>
+                        <span class="kc-stat-label">Tickets Sold</span>
+                        <span class="small" style="color:#34d399; margin-top:2px;">&#9650; 8% vs last month</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="kc-stat-card">
+                    <div class="kc-stat-icon kc-icon-green"><i class="fa-solid fa-chair"></i></div>
+                    <div class="kc-stat-body">
+                        <span class="kc-stat-value">73%</span>
+                        <span class="kc-stat-label">Avg Occupancy</span>
+                        <span class="small" style="color:#fbbf24; margin-top:2px;">&#9660; 3% vs last month</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="kc-stat-card">
+                    <div class="kc-stat-icon kc-icon-red"><i class="fa-solid fa-clapperboard"></i></div>
+                    <div class="kc-stat-body">
+                        <span class="kc-stat-value">168</span>
+                        <span class="kc-stat-label">Total Shows</span>
+                        <span class="small text-secondary" style="margin-top:2px;">This month</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* CHARTS PLACEHOLDER *@
+<section class="kc-section kc-section-mid" style="padding: 2rem 0;">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-7">
+                <div class="kc-chart-placeholder">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Revenue Trend — Chart Coming Soon</span>
+                    <span class="text-secondary" style="font-size:0.72rem; text-transform:none; letter-spacing:0;">Daily
+                        revenue breakdown will be displayed here.</span>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="kc-chart-placeholder">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Occupancy by Screen — Chart Coming Soon</span>
+                        <span class="text-secondary" style="font-size:0.72rem; text-transform:none; letter-spacing:0;">Seat
+                            occupancy distribution per screen.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        @* TABLES: TOP MOVIES + SCREEN PERFORMANCE *@
+        <section class="kc-section kc-section-dark" style="padding: 2rem 0 3rem;">
+            <div class="container">
+                <div class="row g-5">
+
+                    @* Top Movies *@
+                    <div class="col-lg-6">
+                        <h2 class="kc-section-title fs-5 mb-3">
+                            <i class="fa-solid fa-trophy me-2 kc-gold"></i>Top Movies This Month
+                        </h2>
+                        <div class="table-responsive">
+                            <table class="table kc-table">
+                                <thead>
+                                    <tr>
+                                        <th>Movie</th>
+                                        <th>Shows</th>
+                                        <th>Tickets</th>
+                                        <th>Revenue</th>
+                                        <th>Occ.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong class="text-white">Star Odyssey</strong></td>
+                                        <td>42</td>
+                                        <td>498</td>
+                                        <td>Rs. 1,80,000</td>
+                                        <td><span class="kc-status-badge kc-status-open">83%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-white">Kathmandu Nights</strong></td>
+                                        <td>36</td>
+                                        <td>412</td>
+                                        <td>Rs. 1,25,800</td>
+                                        <td><span class="kc-status-badge kc-status-filling">91%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-white">Everest's Call</strong></td>
+                                        <td>48</td>
+                                        <td>389</td>
+                                        <td>Rs. 1,10,700</td>
+                                        <td><span class="kc-status-badge kc-status-open">68%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-white">Shadow Realm</strong></td>
+                                        <td>42</td>
+                                        <td>343</td>
+                                        <td>Rs. 68,700</td>
+                                        <td><span class="kc-status-badge kc-status-open">81%</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    @* Screen Performance *@
+                    <div class="col-lg-6">
+                        <h2 class="kc-section-title fs-5 mb-3">
+                            <i class="fa-solid fa-building me-2 kc-gold"></i>Screen Performance
+                        </h2>
+                        <div class="table-responsive">
+                            <table class="table kc-table">
+                                <thead>
+                                    <tr>
+                                        <th>Screen</th>
+                                        <th>Shows</th>
+                                        <th>Tickets</th>
+                                        <th>Avg Occ.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong class="text-white">Screen 4</strong> <span
+                                            class="text-muted small">(IMAX)</span></td>
+                                            <td>42</td>
+                                            <td>5,460</td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="progress"
+                                                         style="height:5px; width:50px; background:rgba(255,255,255,0.08);">
+                                                        <div class="progress-bar" style="width:87%; background:#fbbf24;"></div>
+                                                    </div>
+                                                    <span class="small text-muted">87%</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong class="text-white">Screen 3</strong> <span
+                                                class="text-muted small">(Premium)</span></td>
+                                                <td>36</td>
+                                                <td>2,592</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="progress"
+                                                             style="height:5px; width:50px; background:rgba(255,255,255,0.08);">
+                                                            <div class="progress-bar" style="width:90%; background:#fbbf24;"></div>
+                                                        </div>
+                                                        <span class="small text-muted">90%</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong class="text-white">Screen 2</strong> <span
+                                                    class="text-muted small">(Standard)</span></td>
+                                                    <td>48</td>
+                                                    <td>3,840</td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <div class="progress"
+                                                                 style="height:5px; width:50px; background:rgba(255,255,255,0.08);">
+                                                                <div class="progress-bar" style="width:80%; background:var(--kc-gold);">
+                                                                </div>
+                                                            </div>
+                                                            <span class="small text-muted">80%</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong class="text-white">Screen 1</strong> <span
+                                                        class="text-muted small">(Standard)</span></td>
+                                                        <td>42</td>
+                                                        <td>2,184</td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <div class="progress"
+                                                                     style="height:5px; width:50px; background:rgba(255,255,255,0.08);">
+                                                                    <div class="progress-bar" style="width:43%; background:var(--kc-gold);">
+                                                                    </div>
+                                                                </div>
+                                                                <span class="small text-muted">43%</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>

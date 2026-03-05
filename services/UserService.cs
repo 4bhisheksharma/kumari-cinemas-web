@@ -1,26 +1,28 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Data;
 using Oracle.ManagedDataAccess.Client;
 
-public class UserList : PageModel
+namespace KumariCinemas.Web.Services;
+
+public class UserService
 {
     private readonly DatabaseConnHelper _dbHelper;
-    public List<User> Users { get; set; } = new();
 
-    public UserList(DatabaseConnHelper dbHelper)
+    public UserService(DatabaseConnHelper dbHelper)
     {
         _dbHelper = dbHelper;
     }
 
-    public void OnGet()
+    public List<User> GetAllUsers()
     {
+        var users = new List<User>();
+
         using var conn = _dbHelper.GetConnection();
         conn.Open();
         using var cmd = new OracleCommand("SELECT * FROM UserTable", conn);
         using var reader = cmd.ExecuteReader();
+
         while (reader.Read())
         {
-            Users.Add(new User
+            users.Add(new User
             {
                 UserID = reader.GetInt32(0),
                 UserName = reader.GetString(1),
@@ -29,5 +31,7 @@ public class UserList : PageModel
                 Address = reader.IsDBNull(4) ? null : reader.GetString(4)
             });
         }
+
+        return users;
     }
 }

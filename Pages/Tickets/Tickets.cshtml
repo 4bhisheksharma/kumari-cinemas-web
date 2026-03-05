@@ -1,0 +1,167 @@
+@page "/tickets"
+@model KumariCinemas.Web.Pages.Tickets.TicketsModel
+@{
+    ViewData["Title"] = "Tickets";
+}
+
+<div class="kc-page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between py-4 flex-wrap gap-3">
+            <div>
+                <h1 class="kc-dashboard-title mb-1">
+                    <i class="fa-solid fa-ticket me-2 kc-gold"></i>Ticket Oversight
+                </h1>
+                <p class="text-secondary mb-0 small">View and monitor all ticket bookings across shows.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn kc-btn-outline btn-sm">
+                    <i class="fa-solid fa-file-export me-1"></i>Export
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="kc-filter-bar">
+    <div class="container">
+        <div class="row g-2 align-items-center">
+            <div class="col-12 col-md-3">
+                <div class="input-group input-group-sm kc-search-group">
+                    <span class="input-group-text"><i class="fa-solid fa-search"></i></span>
+                    <input type="text" class="form-control kc-input" placeholder="Search by ref. no. or movie...">
+                </div>
+            </div>
+            <div class="col-auto">
+                <select class="form-select form-select-sm kc-input">
+                    <option value="">All Movies</option>
+                    <option>Everest's Call</option>
+                    <option>Shadow Realm</option>
+                    <option>Kathmandu Nights</option>
+                    <option>Star Odyssey</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <input type="date" class="form-control form-control-sm kc-input" value="2026-03-04">
+            </div>
+            <div class="col-auto">
+                <select class="form-select form-select-sm kc-input">
+                    <option value="">All Statuses</option>
+                    <option>Confirmed</option>
+                    <option>Cancelled</option>
+                    <option>Expired</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="kc-section kc-section-dark" style="padding: 2rem 0 3rem;">
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table kc-table">
+                <thead>
+                    <tr>
+                        <th>Ref. No.</th>
+                        <th>Movie</th>
+                        <th>Show Date &amp; Time</th>
+                        <th>Screen</th>
+                        <th>Seat(s)</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="kc-gold small fw-bold">KC-241001</td>
+                        <td><strong class="text-white">Everest's Call</strong></td>
+                        <td>Mar 4, 2026 &mdash; 10:00 AM</td>
+                        <td>Screen 1</td>
+                        <td><span class="kc-tag">A5</span> <span class="kc-tag">A6</span></td>
+                        <td>Rs. 600</td>
+                        <td><span class="kc-status-badge kc-status-open">Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td class="kc-gold small fw-bold">KC-241002</td>
+                        <td><strong class="text-white">Shadow Realm</strong></td>
+                        <td>Mar 4, 2026 &mdash; 11:15 AM</td>
+                        <td>Screen 2</td>
+                        <td><span class="kc-tag">C3</span> <span class="kc-tag">C4</span> <span class="kc-tag">C5</span>
+                            <span class="kc-tag">C6</span>
+                        </td>
+                        <td>Rs. 1,400</td>
+                        <td><span class="kc-status-badge kc-status-open">Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td class="kc-gold small fw-bold">KC-241003</td>
+                        <td><strong class="text-white">Kathmandu Nights</strong></td>
+                        <td>Mar 4, 2026 &mdash; 12:00 PM</td>
+                        <td>Screen 3</td>
+                        <td><span class="kc-tag">B2</span></td>
+                        <td>Rs. 350</td>
+                        <td><span class="kc-status-badge kc-status-cancelled">Cancelled</span></td>
+                    </tr>
+                    <tr>
+                        <td class="kc-gold small fw-bold">KC-241004</td>
+                        <td><strong class="text-white">Star Odyssey</strong></td>
+                        <td>Mar 4, 2026 &mdash; 1:30 PM</td>
+                        <td>Screen 4</td>
+                        <td><span class="kc-tag">D1</span> <span class="kc-tag">D2</span></td>
+                        <td>Rs. 900</td>
+                        <td><span class="kc-status-badge kc-status-open">Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td class="kc-gold small fw-bold">KC-241005</td>
+                        <td><strong class="text-white">Everest's Call</strong></td>
+                        <td>Mar 4, 2026 &mdash; 2:30 PM</td>
+                        <td>Screen 1</td>
+                        <td><span class="kc-tag">F7</span></td>
+                        <td>Rs. 300</td>
+                        <td><span class="kc-status-badge kc-status-open">Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td class="kc-gold small fw-bold">KC-241006</td>
+                        <td><strong class="text-white">Shadow Realm</strong></td>
+                        <td>Mar 4, 2026 &mdash; 3:45 PM</td>
+                        <td>Screen 2</td>
+                        <td><span class="kc-tag">E4</span> <span class="kc-tag">E5</span></td>
+                        <td>Rs. 700</td>
+                        <td><span class="kc-status-badge kc-status-open">Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td class="kc-gold small fw-bold">KC-241007</td>
+                        <td><strong class="text-white">Star Odyssey</strong></td>
+                        <td>Mar 4, 2026 &mdash; 6:00 PM</td>
+                        <td>Screen 4</td>
+                        <td><span class="kc-tag">G1</span> <span class="kc-tag">G2</span> <span class="kc-tag">G3</span>
+                        </td>
+                        <td>Rs. 1,350</td>
+                        <td><span class="kc-status-badge kc-status-open">Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td class="kc-gold small fw-bold">KC-241008</td>
+                        <td><strong class="text-white">Kathmandu Nights</strong></td>
+                        <td>Mar 3, 2026 &mdash; 7:00 PM</td>
+                        <td>Screen 3</td>
+                        <td><span class="kc-tag">H8</span></td>
+                        <td>Rs. 350</td>
+                        <td><span class="kc-status-badge kc-status-expired">Expired</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
+            <p class="text-secondary small mb-0">Showing 8 of 1,642 tickets</p>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item disabled"><a class="page-link kc-input" href="#">&laquo;</a></li>
+                    <li class="page-item active"><a class="page-link" href="#"
+                                                        style="background:var(--kc-gold);border-color:var(--kc-gold);color:#000;">1</a></li>
+                        <li class="page-item"><a class="page-link kc-input" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link kc-input" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link kc-input" href="#">&raquo;</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </section>

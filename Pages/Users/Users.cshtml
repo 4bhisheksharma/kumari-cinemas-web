@@ -1,0 +1,214 @@
+@page "/users"
+@model KumariCinemas.Web.Pages.Users.UsersModel
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="kc-page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between py-4 flex-wrap gap-3">
+            <div>
+                <h1 class="kc-dashboard-title mb-1">
+                    <i class="fa-solid fa-users me-2 kc-gold"></i>Users
+                </h1>
+                <p class="text-secondary mb-0 small">Manage staff accounts and contact information.</p>
+            </div>
+            <button class="btn kc-btn-primary" data-bs-toggle="modal" data-bs-target="#userModal">
+                <i class="fa-solid fa-plus me-1"></i>Add User
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="kc-filter-bar">
+    <div class="container">
+        <div class="row g-2 align-items-center">
+            <div class="col-12 col-md-4">
+                <div class="input-group input-group-sm kc-search-group">
+                    <span class="input-group-text"><i class="fa-solid fa-search"></i></span>
+                    <input type="text" class="form-control kc-input" placeholder="Search by name or email...">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="kc-section kc-section-dark" style="padding: 2rem 0 3rem;">
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table kc-table">
+                <thead>
+                    <tr>
+                        <th style="width:4%">ID</th>
+                        <th>Name</th>
+                        <th>Contact No.</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Users.Any())
+                    {
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <td class="text-muted small">@user.UserID</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="kc-avatar">@user.UserName[0]</div>
+                                        <strong class="text-white">@user.UserName</strong>
+                                    </div>
+                                </td>
+                                <td>@user.ContactNumber</td>
+                                <td class="text-secondary">@user.Email</td>
+                                <td class="text-secondary">@(user.Address ?? "—")</td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                            data-bs-target="#userModal"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
+                                        class="fa-solid fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    else
+                        {
+                            <tr>
+                                <td class="text-muted small">1</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="kc-avatar">R</div>
+                                        <strong class="text-white">Rajesh Sharma</strong>
+                                    </div>
+                                </td>
+                                <td>9841234567</td>
+                                <td class="text-secondary">rajesh@kumaricinemas.com</td>
+                                <td class="text-secondary">Kathmandu</td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                            data-bs-target="#userModal"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
+                                        class="fa-solid fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted small">2</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="kc-avatar">P</div>
+                                            <strong class="text-white">Priya Thapa</strong>
+                                        </div>
+                                    </td>
+                                    <td>9845678901</td>
+                                    <td class="text-secondary">priya@kumaricinemas.com</td>
+                                    <td class="text-secondary">Lalitpur</td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                                data-bs-target="#userModal"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
+                                            class="fa-solid fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted small">3</td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="kc-avatar">A</div>
+                                                <strong class="text-white">Aakash Karki</strong>
+                                            </div>
+                                        </td>
+                                        <td>9812345678</td>
+                                        <td class="text-secondary">aakash@kumaricinemas.com</td>
+                                        <td class="text-secondary">Bhaktapur</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                                    data-bs-target="#userModal"><i class="fa-solid fa-pen"></i></button>
+                                            <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
+                                                class="fa-solid fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-muted small">4</td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="kc-avatar">S</div>
+                                                    <strong class="text-white">Sunita Gurung</strong>
+                                                </div>
+                                            </td>
+                                            <td>9867890123</td>
+                                            <td class="text-secondary">sunita@kumaricinemas.com</td>
+                                            <td class="text-secondary">Kathmandu</td>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                                        data-bs-target="#userModal"><i class="fa-solid fa-pen"></i></button>
+                                                <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
+                                                    class="fa-solid fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted small">5</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="kc-avatar">B</div>
+                                                        <strong class="text-white">Binod Rai</strong>
+                                                    </div>
+                                                </td>
+                                                <td>9854321098</td>
+                                                <td class="text-secondary">binod@kumaricinemas.com</td>
+                                                <td class="text-secondary">Pokhara</td>
+                                                <td class="text-end">
+                                                    <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                                            data-bs-target="#userModal"><i class="fa-solid fa-pen"></i></button>
+                                                    <button class="btn btn-sm kc-btn-icon-danger" title="Delete"><i
+                                                        class="fa-solid fa-trash"></i></button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </section>
+
+                        @* ── ADD / EDIT USER MODAL ─────────────────────────────── *@
+                        <div class="modal fade kc-modal" id="userModal" tabindex="-1" aria-labelledby="userModalLabel">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title kc-gold" id="userModalLabel">
+                                            <i class="fa-solid fa-user-plus me-2"></i>Add New User
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body p-4">
+                                        <form>
+                                            <div class="row g-3">
+                                                <div class="col-12">
+                                                    <label class="form-label">Full Name</label>
+                                                    <input type="text" class="form-control kc-input" placeholder="Enter full name">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Contact Number</label>
+                                                    <input type="tel" class="form-control kc-input" placeholder="98XXXXXXXX">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Email</label>
+                                                    <input type="email" class="form-control kc-input" placeholder="user@kumaricinemas.com">
+                                                </div>
+                                                <div class="col-12">
+                                                    <label class="form-label">Address</label>
+                                                    <input type="text" class="form-control kc-input" placeholder="City / District">
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn kc-btn-outline btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn kc-btn-primary btn-sm">
+                                            <i class="fa-solid fa-floppy-disk me-1"></i>Save User
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>

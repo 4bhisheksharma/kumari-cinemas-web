@@ -1,0 +1,337 @@
+@page "/schedules"
+@model KumariCinemas.Web.Pages.Schedules.SchedulesModel
+@{
+    ViewData["Title"] = "Schedules";
+}
+
+<div class="kc-page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between py-4 flex-wrap gap-3">
+            <div>
+                <h1 class="kc-dashboard-title mb-1">
+                    <i class="fa-solid fa-calendar-days me-2 kc-gold"></i>Show Schedules
+                </h1>
+                <p class="text-secondary mb-0 small">View and manage show times across all screens.</p>
+            </div>
+            <button class="btn kc-btn-primary" data-bs-toggle="modal" data-bs-target="#showModal">
+                <i class="fa-solid fa-plus me-1"></i>Add Show
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="kc-filter-bar">
+    <div class="container">
+        <div class="row g-2 align-items-center">
+            <div class="col-auto">
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn kc-btn-primary">Today</button>
+                    <button type="button" class="btn kc-btn-outline">Tomorrow</button>
+                    <button type="button" class="btn kc-btn-outline">This Week</button>
+                </div>
+            </div>
+            <div class="col-auto">
+                <select class="form-select form-select-sm kc-input">
+                    <option value="">All Movies</option>
+                    <option>Everest's Call</option>
+                    <option>Shadow Realm</option>
+                    <option>Kathmandu Nights</option>
+                    <option>Star Odyssey</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <select class="form-select form-select-sm kc-input">
+                    <option value="">All Screens</option>
+                    <option>Screen 1 (Hall A)</option>
+                    <option>Screen 2 (Hall B)</option>
+                    <option>Screen 3 (Hall C)</option>
+                    <option>Screen 4 (Hall D)</option>
+                </select>
+            </div>
+            <div class="col-auto ms-auto">
+                <input type="date" class="form-control form-control-sm kc-input" value="2026-03-04">
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="kc-section kc-section-dark" style="padding: 2rem 0 3rem;">
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table kc-table">
+                <thead>
+                    <tr>
+                        <th>Movie</th>
+                        <th>Screen</th>
+                        <th>Date</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Seats Sold</th>
+                        <th>Occupancy</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong class="text-white">Everest's Call</strong></td>
+                        <td>Screen 1 <span class="text-muted small">(Hall A)</span></td>
+                        <td>Mar 4, 2026</td>
+                        <td>10:00 AM</td>
+                        <td>12:21 PM</td>
+                        <td>45 / 120</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1"
+                                     style="height:5px; background:rgba(255,255,255,0.08); width:60px;">
+                                    <div class="progress-bar" style="width:37.5%; background:var(--kc-gold);"></div>
+                                </div>
+                                <span class="small text-muted">38%</span>
+                            </div>
+                        </td>
+                        <td><span class="kc-status-badge kc-status-open">Open</span></td>
+                        <td class="text-end">
+                            <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                    data-bs-target="#showModal"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-sm kc-btn-icon-danger" title="Cancel Show"><i
+                                class="fa-solid fa-ban"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong class="text-white">Shadow Realm</strong></td>
+                            <td>Screen 2 <span class="text-muted small">(Hall B)</span></td>
+                            <td>Mar 4, 2026</td>
+                            <td>11:15 AM</td>
+                            <td>1:23 PM</td>
+                            <td>88 / 100</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1"
+                                         style="height:5px; background:rgba(255,255,255,0.08); width:60px;">
+                                        <div class="progress-bar" style="width:88%; background:#fbbf24;"></div>
+                                    </div>
+                                    <span class="small text-muted">88%</span>
+                                </div>
+                            </td>
+                            <td><span class="kc-status-badge kc-status-filling">Filling Fast</span></td>
+                            <td class="text-end">
+                                <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                        data-bs-target="#showModal"><i class="fa-solid fa-pen"></i></button>
+                                <button class="btn btn-sm kc-btn-icon-danger" title="Cancel Show"><i
+                                    class="fa-solid fa-ban"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong class="text-white">Kathmandu Nights</strong></td>
+                                <td>Screen 3 <span class="text-muted small">(Hall C)</span></td>
+                                <td>Mar 4, 2026</td>
+                                <td>12:00 PM</td>
+                                <td>2:00 PM</td>
+                                <td>80 / 80</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress flex-grow-1"
+                                             style="height:5px; background:rgba(255,255,255,0.08); width:60px;">
+                                            <div class="progress-bar" style="width:100%; background:var(--kc-red);"></div>
+                                        </div>
+                                        <span class="small text-muted">100%</span>
+                                    </div>
+                                </td>
+                                <td><span class="kc-status-badge kc-status-full">Houseful</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                            data-bs-target="#showModal"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="btn btn-sm kc-btn-icon-danger" title="Cancel Show"><i
+                                        class="fa-solid fa-ban"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="text-white">Star Odyssey</strong></td>
+                                    <td>Screen 4 <span class="text-muted small">(Hall D)</span></td>
+                                    <td>Mar 4, 2026</td>
+                                    <td>1:30 PM</td>
+                                    <td>4:15 PM</td>
+                                    <td>72 / 150</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="progress flex-grow-1"
+                                                 style="height:5px; background:rgba(255,255,255,0.08); width:60px;">
+                                                <div class="progress-bar" style="width:48%; background:var(--kc-gold);"></div>
+                                            </div>
+                                            <span class="small text-muted">48%</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="kc-status-badge kc-status-open">Open</span></td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                                data-bs-target="#showModal"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="btn btn-sm kc-btn-icon-danger" title="Cancel Show"><i
+                                            class="fa-solid fa-ban"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong class="text-white">Everest's Call</strong></td>
+                                        <td>Screen 1 <span class="text-muted small">(Hall A)</span></td>
+                                        <td>Mar 4, 2026</td>
+                                        <td>2:30 PM</td>
+                                        <td>4:51 PM</td>
+                                        <td>15 / 120</td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="progress flex-grow-1"
+                                                     style="height:5px; background:rgba(255,255,255,0.08); width:60px;">
+                                                    <div class="progress-bar" style="width:12.5%; background:var(--kc-gold);"></div>
+                                                </div>
+                                                <span class="small text-muted">13%</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="kc-status-badge kc-status-open">Open</span></td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                                    data-bs-target="#showModal"><i class="fa-solid fa-pen"></i></button>
+                                            <button class="btn btn-sm kc-btn-icon-danger" title="Cancel Show"><i
+                                                class="fa-solid fa-ban"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong class="text-white">Shadow Realm</strong></td>
+                                            <td>Screen 2 <span class="text-muted small">(Hall B)</span></td>
+                                            <td>Mar 4, 2026</td>
+                                            <td>3:45 PM</td>
+                                            <td>5:53 PM</td>
+                                            <td>45 / 100</td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="progress flex-grow-1"
+                                                         style="height:5px; background:rgba(255,255,255,0.08); width:60px;">
+                                                        <div class="progress-bar" style="width:45%; background:var(--kc-gold);"></div>
+                                                    </div>
+                                                    <span class="small text-muted">45%</span>
+                                                </div>
+                                            </td>
+                                            <td><span class="kc-status-badge kc-status-open">Open</span></td>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                                        data-bs-target="#showModal"><i class="fa-solid fa-pen"></i></button>
+                                                <button class="btn btn-sm kc-btn-icon-danger" title="Cancel Show"><i
+                                                    class="fa-solid fa-ban"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong class="text-white">Star Odyssey</strong></td>
+                                                <td>Screen 4 <span class="text-muted small">(Hall D)</span></td>
+                                                <td>Mar 4, 2026</td>
+                                                <td>6:00 PM</td>
+                                                <td>8:45 PM</td>
+                                                <td>130 / 150</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="progress flex-grow-1"
+                                                             style="height:5px; background:rgba(255,255,255,0.08); width:60px;">
+                                                            <div class="progress-bar" style="width:87%; background:#fbbf24;"></div>
+                                                        </div>
+                                                        <span class="small text-muted">87%</span>
+                                                    </div>
+                                                </td>
+                                                <td><span class="kc-status-badge kc-status-filling">Filling Fast</span></td>
+                                                <td class="text-end">
+                                                    <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                                            data-bs-target="#showModal"><i class="fa-solid fa-pen"></i></button>
+                                                    <button class="btn btn-sm kc-btn-icon-danger" title="Cancel Show"><i
+                                                        class="fa-solid fa-ban"></i></button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong class="text-white">Kathmandu Nights</strong></td>
+                                                    <td>Screen 3 <span class="text-muted small">(Hall C)</span></td>
+                                                    <td>Mar 4, 2026</td>
+                                                    <td>7:00 PM</td>
+                                                    <td>9:00 PM</td>
+                                                    <td>75 / 80</td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <div class="progress flex-grow-1"
+                                                                 style="height:5px; background:rgba(255,255,255,0.08); width:60px;">
+                                                                <div class="progress-bar" style="width:94%; background:#fbbf24;"></div>
+                                                            </div>
+                                                            <span class="small text-muted">94%</span>
+                                                        </div>
+                                                    </td>
+                                                    <td><span class="kc-status-badge kc-status-filling">Filling Fast</span></td>
+                                                    <td class="text-end">
+                                                        <button class="btn btn-sm kc-btn-icon" title="Edit" data-bs-toggle="modal"
+                                                                data-bs-target="#showModal"><i class="fa-solid fa-pen"></i></button>
+                                                        <button class="btn btn-sm kc-btn-icon-danger" title="Cancel Show"><i
+                                                            class="fa-solid fa-ban"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                @* ── ADD / EDIT SHOW MODAL ─────────────────────────────── *@
+                                <div class="modal fade kc-modal" id="showModal" tabindex="-1" aria-labelledby="showModalLabel">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title kc-gold" id="showModalLabel">
+                                                    <i class="fa-solid fa-clapperboard me-2"></i>Add New Show
+                                                </h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body p-4">
+                                                <form>
+                                                    <div class="row g-3">
+                                                        <div class="col-12">
+                                                            <label class="form-label">Movie</label>
+                                                            <select class="form-select kc-input">
+                                                                <option value="">Select a movie...</option>
+                                                                <option>Everest's Call</option>
+                                                                <option>Shadow Realm</option>
+                                                                <option>Kathmandu Nights</option>
+                                                                <option>Star Odyssey</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <label class="form-label">Screen</label>
+                                                            <select class="form-select kc-input">
+                                                                <option value="">Select a screen...</option>
+                                                                <option>Screen 1 (Hall A) — Standard, 120 seats</option>
+                                                                <option>Screen 2 (Hall B) — Standard, 100 seats</option>
+                                                                <option>Screen 3 (Hall C) — Premium, 80 seats</option>
+                                                                <option>Screen 4 (Hall D) — IMAX, 150 seats</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Show Date</label>
+                                                            <input type="date" class="form-control kc-input">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Start Time</label>
+                                                            <input type="time" class="form-control kc-input">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Ticket Price (Rs.)</label>
+                                                            <input type="number" class="form-control kc-input" placeholder="300">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Status</label>
+                                                            <select class="form-select kc-input">
+                                                                <option>Scheduled</option>
+                                                                <option>Cancelled</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn kc-btn-outline btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="button" class="btn kc-btn-primary btn-sm">
+                                                    <i class="fa-solid fa-floppy-disk me-1"></i>Save Show
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>

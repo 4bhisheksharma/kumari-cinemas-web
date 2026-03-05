@@ -1,8 +1,11 @@
+using KumariCinemas.Web.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<DatabaseConnHelper>();
+builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 

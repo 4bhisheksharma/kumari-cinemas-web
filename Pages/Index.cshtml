@@ -29,7 +29,7 @@
                 <div class="kc-stat-card">
                     <div class="kc-stat-icon kc-icon-blue"><i class="fa-solid fa-film"></i></div>
                     <div class="kc-stat-body">
-                        <span class="kc-stat-value">12</span>
+                        <span class="kc-stat-value">@Model.Movies</span>
                         <span class="kc-stat-label">Movies Active</span>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                 <div class="kc-stat-card">
                     <div class="kc-stat-icon kc-icon-gold"><i class="fa-solid fa-clapperboard"></i></div>
                     <div class="kc-stat-body">
-                        <span class="kc-stat-value">28</span>
+                        <span class="kc-stat-value">@Model.ShowsToday</span>
                         <span class="kc-stat-label">Shows Today</span>
                     </div>
                 </div>
@@ -47,8 +47,8 @@
                 <div class="kc-stat-card">
                     <div class="kc-stat-icon kc-icon-green"><i class="fa-solid fa-building"></i></div>
                     <div class="kc-stat-body">
-                        <span class="kc-stat-value">5</span>
-                        <span class="kc-stat-label">Screens</span>
+                        <span class="kc-stat-value">@Model.Halls</span>
+                        <span class="kc-stat-label">Halls</span>
                     </div>
                 </div>
             </div>
@@ -56,7 +56,7 @@
                 <div class="kc-stat-card">
                     <div class="kc-stat-icon kc-icon-red"><i class="fa-solid fa-ticket"></i></div>
                     <div class="kc-stat-body">
-                        <span class="kc-stat-value">342</span>
+                        <span class="kc-stat-value">@Model.TicketsSoldToday</span>
                         <span class="kc-stat-label">Tickets Sold Today</span>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
         </div>
         <div class="row g-4">
             <div class="col-md-6 col-lg-3">
-                <a asp-page="/Movies/Index" class="kc-action-card text-decoration-none">
+                <a asp-page="/Movies/Movies" class="kc-action-card text-decoration-none">
                     <div class="kc-action-icon"><i class="fa-solid fa-film"></i></div>
                     <h5 class="kc-action-title">Manage Movies</h5>
                     <p class="kc-action-desc">Add, edit, or remove movies from the schedule.</p>
@@ -83,7 +83,7 @@
                 </a>
             </div>
             <div class="col-md-6 col-lg-3">
-                <a asp-page="/Schedules/Index" class="kc-action-card text-decoration-none">
+                <a asp-page="/Schedules/Schedules" class="kc-action-card text-decoration-none">
                     <div class="kc-action-icon"><i class="fa-solid fa-calendar-days"></i></div>
                     <h5 class="kc-action-title">Manage Schedules</h5>
                     <p class="kc-action-desc">View and update show times across all screens.</p>
@@ -91,7 +91,7 @@
                 </a>
             </div>
             <div class="col-md-6 col-lg-3">
-                <a asp-page="/Theaters/Index" class="kc-action-card text-decoration-none">
+                <a asp-page="/Theaters/Theaters" class="kc-action-card text-decoration-none">
                     <div class="kc-action-icon"><i class="fa-solid fa-building"></i></div>
                     <h5 class="kc-action-title">Manage Theaters</h5>
                     <p class="kc-action-desc">Configure screens, seating capacity, and facilities.</p>
@@ -99,7 +99,7 @@
                 </a>
             </div>
             <div class="col-md-6 col-lg-3">
-                <a asp-page="/Reports/Index" class="kc-action-card text-decoration-none">
+                <a asp-page="/Reports/Reports" class="kc-action-card text-decoration-none">
                     <div class="kc-action-icon"><i class="fa-solid fa-chart-bar"></i></div>
                     <h5 class="kc-action-title">View Reports</h5>
                     <p class="kc-action-desc">Access ticket sales, occupancy, and performance data.</p>
@@ -117,7 +117,7 @@
             <h2 class="kc-section-title fs-4 mb-0">
                 <i class="fa-solid fa-clapperboard me-2 kc-gold"></i>Today's Show Schedule
             </h2>
-            <a asp-page="/Schedules/Index" class="btn kc-btn-outline btn-sm">
+            <a asp-page="/Schedules/Schedules" class="btn kc-btn-outline btn-sm">
                 <i class="fa-solid fa-list me-1"></i>View All Schedules
             </a>
         </div>
@@ -126,48 +126,32 @@
                 <thead>
                     <tr>
                         <th>Movie</th>
-                        <th>Screen</th>
+                        <th>Hall</th>
                         <th>Show Time</th>
                         <th>Seats Available</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><strong>Everest's Call</strong></td>
-                        <td>Screen 1</td>
-                        <td>10:00 AM</td>
-                        <td>45 / 120</td>
-                        <td><span class="kc-status-badge kc-status-open">Open</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Shadow Realm</strong></td>
-                        <td>Screen 2</td>
-                        <td>11:15 AM</td>
-                        <td>12 / 100</td>
-                        <td><span class="kc-status-badge kc-status-filling">Filling Fast</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Kathmandu Nights</strong></td>
-                        <td>Screen 3</td>
-                        <td>12:00 PM</td>
-                        <td>0 / 80</td>
-                        <td><span class="kc-status-badge kc-status-full">Houseful</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Star Odyssey</strong></td>
-                        <td>Screen 4</td>
-                        <td>01:30 PM</td>
-                        <td>78 / 150</td>
-                        <td><span class="kc-status-badge kc-status-open">Open</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Everest's Call</strong></td>
-                        <td>Screen 1</td>
-                        <td>02:30 PM</td>
-                        <td>90 / 120</td>
-                        <td><span class="kc-status-badge kc-status-open">Open</span></td>
-                    </tr>
+                    @if (Model.TodaysShows.Any())
+                    {
+                        @foreach (var show in Model.TodaysShows)
+                        {
+                            <tr>
+                                <td><strong class="text-white">@show.MovieTitle</strong></td>
+                                <td>@show.HallName</td>
+                                <td>@show.ShowTimeStr</td>
+                                <td>@show.Available / @show.Capacity</td>
+                                <td><span class="kc-status-badge @show.Status.CssClass">@show.Status.Label</span></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">No shows scheduled for today.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

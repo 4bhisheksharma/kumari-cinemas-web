@@ -213,4 +213,165 @@ public class ReportService : BaseService
 
         return report;
     }
+
+    // ────────────────────────────────────────────────────
+    //  Movie dropdown for the occupancy report
+    // ────────────────────────────────────────────────────
+    public List<SelectListItem> GetMovieOptions() => Query(
+        "SELECT MovieID, Title || ' (' || Genre || ')' FROM Movie ORDER BY Title",
+        r => new SelectListItem
+        {
+            Value = r.GetInt32(0).ToString(),
+            Text = r.IsDBNull(1) ? $"Movie #{r.GetInt32(0)}" : r.GetString(1)
+        });
+
+    // ────────────────────────────────────────────────────
+    //  Complex query: MovieTheaterCityHallOccupancyPerformer
+    // ────────────────────────────────────────────────────
+    //
+    //  SQL QUERY (Oracle 21c):
+    //  ---------------------------------------------------------
+    //  SELECT th.TheatreID, th.TheatreName, th.TheatreCity,
+    //         h.HallName, h.HallCapacity,
+    //         COUNT(DISTINCT s.ShowID) AS TotalShows,
+    //         COUNT(DISTINCT s.ShowID) * h.HallCapacity AS TotalSeats,
+    //         COUNT(t.TicketID) AS PaidTickets,
+    //         ROUND(COUNT(t.TicketID) * 100.0
+    //               / NULLIF(COUNT(DISTINCT s.ShowID) * h.HallCapacity, 0), 2) AS OccupancyPct
+    //  FROM   Show s
+    //         JOIN Hall h    ON s.HallID    = h.HallID
+    //         JOIN Theatre th ON h.TheatreID = th.TheatreID
+    //         LEFT JOIN Booking b ON b.ShowID = s.ShowID
+    //         LEFT JOIN Ticket t  ON t.BookingID = b.BookingID
+    //                             AND t.TicketStatus = 'Paid'
+    //  WHERE  s.MovieID = :movieId
+    //  GROUP BY th.TheatreID, th.TheatreName, th.TheatreCity,
+    //           h.HallName, h.HallCapacity
+    //  ORDER BY OccupancyPct DESC
+    //  FETCH FIRST 3 ROWS ONLY
+    //  ---------------------------------------------------------
+
+    private const string MovieOccupancySql = @"
+        SELECT th.TheatreID, th.TheatreName, th.TheatreCity,
+               h.HallName, h.HallCapacity,
+               COUNT(DISTINCT s.ShowID) AS TotalShows,
+               COUNT(DISTINCT s.ShowID) * h.HallCapacity AS TotalSeats,
+               COUNT(t.TicketID) AS PaidTickets,
+               ROUND(COUNT(t.TicketID) * 100.0
+                     / NULLIF(COUNT(DISTINCT s.ShowID) * h.HallCapacity, 0), 2) AS OccupancyPct
+        FROM   Show s
+               JOIN Hall h    ON s.HallID    = h.HallID
+               JOIN Theatre th ON h.TheatreID = th.TheatreID
+               LEFT JOIN Booking b ON b.ShowID = s.ShowID
+               LEFT JOIN Ticket t  ON t.BookingID = b.BookingID
+                                   AND t.TicketStatus = 'Paid'
+        WHERE  s.MovieID = :movieId
+        GROUP BY th.TheatreID, th.TheatreName, th.TheatreCity,
+                 h.HallName, h.HallCapacity
+        ORDER BY OccupancyPct DESC
+        FETCH FIRST 3 ROWS ONLY";
+
+    private const string MovieDetailSql =
+        "SELECT MovieID, Title, Genre, Language, Duration FROM Movie WHERE MovieID = :movieId";
+
+    public MovieOccupancyReport? GetMovieOccupancyReport(int movieId)
+    {
+        MovieOccupancyReport? report = null;
+
+        // Get movie details first
+        using var conn = OpenConnection();
+        using var detailCmd = new OracleCommand(MovieDetailSql, conn);
+        detailCmd.Parameters.Add(Param("movieId", movieId));
+        using var dr = detailCmd.ExecuteReader();
+        if (dr.Read())
+        {
+            report = new MovieOccupancyReport
+            {
+                MovieID = dr.GetInt32(0),
+                MovieTitle = dr.GetString(1),
+                Genre = dr.IsDBNull(2) ? string.Empty : dr.GetString(2),
+                Language = dr.IsDBNull(3) ? string.Empty : dr.GetString(3),
+                Duration = dr.IsDBNull(4) ? 0 : dr.GetInt32(4)
+            };
+        }
+        dr.Close();
+
+        if (report == null) return null;
+
+        // Get top 3 theatres by occupancy
+        using var cmd = new OracleCommand(MovieOccupancySql, conn);
+        cmd.Parameters.Add(Param("movieId", movieId));
+        using var r = cmd.ExecuteReader();
+
+        var rank = 0;
+        while (r.Read())
+        {
+            rank++;
+            var row = new MovieOccupancyRow
+            {
+                Rank = rank,
+                TheatreID = r.GetInt32(0),
+                TheatreName = r.GetString(1),
+                TheatreCity = r.IsDBNull(2) ? string.Empty : r.GetString(2),
+                HallName = r.GetString(3),
+                HallCapacity = r.IsDBNull(4) ? 0 : r.GetInt32(4),
+                TotalShows = Convert.ToInt32(r.GetValue(5)),
+                TotalSeats = Convert.ToInt32(r.GetValue(6)),
+                PaidTickets = Convert.ToInt32(r.GetValue(7)),
+                OccupancyPercent = r.IsDBNull(8) ? 0 : r.GetDecimal(8)
+            };
+            report.TopTheatres.Add(row);
+            report.TotalPaidTickets += row.PaidTickets;
+        }
+
+        return report;
+    }
+
+    // ────────────────────────────────────────────────────
+    //  Dashboard stats (live data from DB)
+    // ────────────────────────────────────────────────────
+    public (int Movies, int ShowsToday, int Halls, int TicketsSoldToday) GetDashboardStats()
+    {
+        int movies = 0, showsToday = 0, halls = 0, ticketsToday = 0;
+        using var conn = OpenConnection();
+
+        using (var cmd = new OracleCommand("SELECT COUNT(*) FROM Movie", conn))
+            movies = Convert.ToInt32(cmd.ExecuteScalar());
+
+        using (var cmd = new OracleCommand("SELECT COUNT(*) FROM Show WHERE TRUNC(ShowDate) = TRUNC(SYSDATE)", conn))
+            showsToday = Convert.ToInt32(cmd.ExecuteScalar());
+
+        using (var cmd = new OracleCommand("SELECT COUNT(*) FROM Hall", conn))
+            halls = Convert.ToInt32(cmd.ExecuteScalar());
+
+        using (var cmd = new OracleCommand(
+            @"SELECT COUNT(*) FROM Ticket t
+              JOIN Booking b ON t.BookingID = b.BookingID
+              WHERE TRUNC(b.BookingTime) = TRUNC(SYSDATE)", conn))
+            ticketsToday = Convert.ToInt32(cmd.ExecuteScalar());
+
+        return (movies, showsToday, halls, ticketsToday);
+    }
+
+    public List<DashboardShowRow> GetTodaysShows() => Query(
+        @"SELECT m.Title, h.HallName,
+                 TO_CHAR(s.ShowTime, 'HH:MI AM') AS ShowTimeStr,
+                 h.HallCapacity,
+                 NVL((SELECT COUNT(*) FROM Ticket t
+                      JOIN Booking b ON t.BookingID = b.BookingID
+                      WHERE b.ShowID = s.ShowID AND t.TicketStatus = 'Paid'), 0) AS Sold
+          FROM Show s
+          JOIN Movie m ON s.MovieID = m.MovieID
+          JOIN Hall h ON s.HallID = h.HallID
+          WHERE TRUNC(s.ShowDate) = TRUNC(SYSDATE)
+          ORDER BY s.ShowTime
+          FETCH FIRST 10 ROWS ONLY",
+        r => new DashboardShowRow
+        {
+            MovieTitle = r.GetString(0),
+            HallName = r.GetString(1),
+            ShowTimeStr = r.GetString(2),
+            Capacity = r.GetInt32(3),
+            Sold = Convert.ToInt32(r.GetValue(4))
+        });
 }

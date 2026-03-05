@@ -16,3 +16,4 @@ packages/
 *.pidb
 *.svclog
 *.scc
+.env

@@ -1,6 +1,14 @@
 using KumariCinemas.Web.Services;
+using DotEnv.Core;
 
 var builder = WebApplication.CreateBuilder(args);
+// Load environment variables from .env file
+new EnvLoader().Load();
+
+// Bridge .env variable into ASP.NET Core configuration
+var oracleConn = Environment.GetEnvironmentVariable("ORACLE_DB_CONNECTION");
+if (!string.IsNullOrEmpty(oracleConn))
+    builder.Configuration["ConnectionStrings:OracleConnection"] = oracleConn;
 
 // Add services to the container.
 builder.Services.AddRazorPages();

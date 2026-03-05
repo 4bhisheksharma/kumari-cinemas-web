@@ -2,75 +2,39 @@ using Oracle.ManagedDataAccess.Client;
 
 namespace KumariCinemas.Web.Services;
 
-public class TheaterService
+public class TheaterService : BaseService
 {
-    private readonly DatabaseConnHelper _dbHelper;
+    public TheaterService(DatabaseConnHelper dbHelper) : base(dbHelper) { }
 
-    public TheaterService(DatabaseConnHelper dbHelper)
-    {
-        _dbHelper = dbHelper;
-    }
-
-    public List<Theater> GetAllTheaters()
-    {
-        var theaters = new List<Theater>();
-
-        using var conn = _dbHelper.GetConnection();
-        conn.Open();
-        using var cmd = new OracleCommand(
-            "SELECT TheatreID, TheatreName, TheatreCity, TheatreAddress, TheatreContactNumber FROM Theatre ORDER BY TheatreID", conn);
-        using var reader = cmd.ExecuteReader();
-
-        while (reader.Read())
+    public List<Theater> GetAllTheaters() => Query(
+        "SELECT TheatreID, TheatreName, TheatreCity, TheatreAddress, TheatreContactNumber FROM Theatre ORDER BY TheatreID",
+        r => new Theater
         {
-            theaters.Add(new Theater
-            {
-                TheatreID = reader.GetInt32(0),
-                TheatreName = reader.GetString(1),
-                TheatreCity = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
-                TheatreAddress = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
-                TheatreContactNumber = reader.IsDBNull(4) ? string.Empty : reader.GetString(4)
-            });
-        }
+            TheatreID = r.GetInt32(0),
+            TheatreName = r.GetString(1),
+            TheatreCity = r.IsDBNull(2) ? string.Empty : r.GetString(2),
+            TheatreAddress = r.IsDBNull(3) ? string.Empty : r.GetString(3),
+            TheatreContactNumber = r.IsDBNull(4) ? string.Empty : r.GetString(4)
+        });
 
-        return theaters;
-    }
+    public void CreateTheater(Theater theater) => Execute(
+        @"INSERT INTO Theatre (TheatreID, TheatreName, TheatreCity, TheatreAddress, TheatreContactNumber)
+          VALUES ((SELECT NVL(MAX(TheatreID),0)+1 FROM Theatre), :name, :city, :address, :contact)",
+        Param("name", theater.TheatreName),
+        Param("city", theater.TheatreCity),
+        Param("address", theater.TheatreAddress),
+        Param("contact", theater.TheatreContactNumber));
 
-    public void CreateTheater(Theater theater)
-    {
-        using var conn = _dbHelper.GetConnection();
-        conn.Open();
-        using var cmd = new OracleCommand(
-            @"INSERT INTO Theatre (TheatreID, TheatreName, TheatreCity, TheatreAddress, TheatreContactNumber) 
-              VALUES ((SELECT NVL(MAX(TheatreID),0)+1 FROM Theatre), :name, :city, :address, :contact)", conn);
-        cmd.Parameters.Add(new OracleParameter("name", theater.TheatreName));
-        cmd.Parameters.Add(new OracleParameter("city", theater.TheatreCity));
-        cmd.Parameters.Add(new OracleParameter("address", theater.TheatreAddress));
-        cmd.Parameters.Add(new OracleParameter("contact", theater.TheatreContactNumber));
-        cmd.ExecuteNonQuery();
-    }
+    public void UpdateTheater(Theater theater) => Execute(
+        @"UPDATE Theatre SET TheatreName=:name, TheatreCity=:city, TheatreAddress=:address,
+          TheatreContactNumber=:contact WHERE TheatreID=:id",
+        Param("name", theater.TheatreName),
+        Param("city", theater.TheatreCity),
+        Param("address", theater.TheatreAddress),
+        Param("contact", theater.TheatreContactNumber),
+        Param("id", theater.TheatreID));
 
-    public void UpdateTheater(Theater theater)
-    {
-        using var conn = _dbHelper.GetConnection();
-        conn.Open();
-        using var cmd = new OracleCommand(
-            @"UPDATE Theatre SET TheatreName = :name, TheatreCity = :city, TheatreAddress = :address, 
-              TheatreContactNumber = :contact WHERE TheatreID = :id", conn);
-        cmd.Parameters.Add(new OracleParameter("name", theater.TheatreName));
-        cmd.Parameters.Add(new OracleParameter("city", theater.TheatreCity));
-        cmd.Parameters.Add(new OracleParameter("address", theater.TheatreAddress));
-        cmd.Parameters.Add(new OracleParameter("contact", theater.TheatreContactNumber));
-        cmd.Parameters.Add(new OracleParameter("id", theater.TheatreID));
-        cmd.ExecuteNonQuery();
-    }
-
-    public void DeleteTheater(int theatreId)
-    {
-        using var conn = _dbHelper.GetConnection();
-        conn.Open();
-        using var cmd = new OracleCommand("DELETE FROM Theatre WHERE TheatreID = :id", conn);
-        cmd.Parameters.Add(new OracleParameter("id", theatreId));
-        cmd.ExecuteNonQuery();
-    }
+    public void DeleteTheater(int theatreId) => Execute(
+        "DELETE FROM Theatre WHERE TheatreID = :id",
+        Param("id", theatreId));
 }

@@ -1,0 +1,248 @@
+@page "/reports/user-tickets"
+@model KumariCinemas.Web.Pages.Reports.UserTicketsModel
+@{
+    ViewData["Title"] = "User Ticket History";
+}
+
+<div class="kc-page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between py-4 flex-wrap gap-3">
+            <div>
+                <h1 class="kc-dashboard-title mb-1">
+                    <i class="fa-solid fa-user-tag me-2 kc-gold"></i>User Ticket History
+                </h1>
+                <p class="text-secondary mb-0 small">
+                    Select a user to view all tickets purchased in the <strong>last 6 months</strong>.
+                </p>
+            </div>
+            <a href="/reports" class="btn kc-btn-outline btn-sm">
+                <i class="fa-solid fa-arrow-left me-1"></i>Back to Reports
+            </a>
+        </div>
+    </div>
+</div>
+
+@* ── Search Form ──────────────────────────────────────────── *@
+<section class="kc-section kc-section-dark" style="padding: 1.5rem 0;">
+    <div class="container">
+        <form method="post" class="row g-3 align-items-end">
+            <div class="col-md-6 col-lg-4">
+                <label class="form-label">Select User</label>
+                <select class="form-select kc-input" name="SelectedUserId" required>
+                    <option value="">-- Choose a User --</option>
+                    @foreach (var u in Model.UserOptions)
+                    {
+                        <option value="@u.Value" selected="@(u.Value == Model.SelectedUserId?.ToString())">@u.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn kc-btn-primary">
+                    <i class="fa-solid fa-magnifying-glass me-1"></i>Generate Report
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+@if (TempData["Info"] != null)
+{
+    <div class="container mt-3">
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-info me-1"></i>@TempData["Info"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+
+@* ── Report Output ────────────────────────────────────────── *@
+@if (Model.Report != null)
+{
+    var rpt = Model.Report;
+
+    @* ── USER DETAILS CARD ── *@
+    <section class="kc-section kc-section-mid" style="padding: 1.5rem 0;">
+        <div class="container">
+            <div class="kc-card p-4">
+                <h5 class="kc-gold mb-3"><i class="fa-solid fa-id-card me-2"></i>User Details</h5>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <span class="text-secondary small d-block">Name</span>
+                        <strong class="text-white">@rpt.UserName</strong>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="text-secondary small d-block">Contact</span>
+                        <span class="text-white">@rpt.ContactNumber</span>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="text-secondary small d-block">Email</span>
+                        <span class="text-white">@(string.IsNullOrEmpty(rpt.Email) ? "—" : rpt.Email)</span>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="text-secondary small d-block">Address</span>
+                        <span class="text-white">@(string.IsNullOrEmpty(rpt.Address) ? "—" : rpt.Address)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ── SUMMARY STATS ── *@
+    <section class="kc-section kc-section-dark py-3">
+        <div class="container">
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <div class="kc-stat-card">
+                        <div class="kc-stat-icon kc-icon-gold"><i class="fa-solid fa-ticket"></i></div>
+                        <div class="kc-stat-body">
+                            <span class="kc-stat-value">@rpt.TotalTickets</span>
+                            <span class="kc-stat-label">Tickets (6 mo.)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="kc-stat-card">
+                        <div class="kc-stat-icon kc-icon-green"><i class="fa-solid fa-sack-dollar"></i></div>
+                        <div class="kc-stat-body">
+                            <span class="kc-stat-value">Rs. @rpt.TotalSpent.ToString("N0")</span>
+                            <span class="kc-stat-label">Total Spent</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="kc-stat-card">
+                        <div class="kc-stat-icon kc-icon-blue"><i class="fa-solid fa-film"></i></div>
+                        <div class="kc-stat-body">
+                            <span class="kc-stat-value">@rpt.Tickets.Select(t => t.MovieTitle).Distinct().Count()</span>
+                            <span class="kc-stat-label">Unique Movies</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="kc-stat-card">
+                        <div class="kc-stat-icon kc-icon-red"><i class="fa-solid fa-building"></i></div>
+                        <div class="kc-stat-body">
+                            <span class="kc-stat-value">@rpt.Tickets.Select(t => t.TheatreName).Distinct().Count()</span>
+                            <span class="kc-stat-label">Theatres Visited</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ── TICKET TABLE ── *@
+    <section class="kc-section kc-section-dark" style="padding: 1rem 0 3rem;">
+        <div class="container">
+            <h5 class="kc-gold mb-3"><i class="fa-solid fa-list me-2"></i>Ticket Details (Last 6 Months)</h5>
+            <div class="table-responsive">
+                <table class="table kc-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ticket No.</th>
+                            <th>Confirmation</th>
+                            <th>Movie</th>
+                            <th>Genre / Lang</th>
+                            <th>Show</th>
+                            <th>Hall / Theatre</th>
+                            <th>Seat</th>
+                            <th>Booked On</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var idx = 0;
+                        }
+                        @foreach (var t in rpt.Tickets)
+                        {
+                            idx++;
+                            var statusCls = t.TicketStatus switch
+                            {
+                                "Cancelled" => "kc-status-cancelled",
+                                "Paid" => "kc-status-open",
+                                _ => "kc-status-filling"
+                            };
+                            <tr>
+                                <td class="text-secondary">@idx</td>
+                                <td class="kc-gold fw-bold small">@t.TicketNumber</td>
+                                <td class="text-secondary small">@t.ConfirmationNumber</td>
+                                <td>
+                                    <strong class="text-white">@t.MovieTitle</strong>
+                                    <span class="text-secondary d-block small">@t.Duration min</span>
+                                </td>
+                                <td class="small">@t.Genre / @t.Language</td>
+                                <td class="small">
+                                    @t.ShowDate.ToString("MMM d, yyyy")<br />
+                                    <span class="text-secondary">@t.ShowTime.ToString("h:mm tt")</span>
+                                </td>
+                                <td class="small">
+                                    @t.HallName<br />
+                                    <span class="text-secondary">@t.TheatreName</span>
+                                </td>
+                                <td><span class="kc-tag">@t.SeatRow@t.SeatNumber</span></td>
+                                <td class="small">
+                                    @(t.ReservationDate == DateTime.MinValue ? "—" : t.ReservationDate.ToString("MMM d, yyyy"))
+                                </td>
+                                <td class="fw-bold">Rs. @t.Amount.ToString("N0")</td>
+                                <td><span class="kc-status-badge @statusCls">@t.TicketStatus</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="kc-gold">
+                            <td colspan="9" class="text-end fw-bold">Grand Total</td>
+                            <td class="fw-bold">Rs. @rpt.TotalSpent.ToString("N0")</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            @* ── SQL QUERY REFERENCE (for documentation / marks) ── *@
+            <details class="mt-4">
+                <summary class="kc-gold" style="cursor:pointer;">
+                    <i class="fa-solid fa-database me-1"></i>View SQL Query Used
+                </summary>
+                <pre class="mt-2 p-3"
+                     style="background:#1a1a2e; border:1px solid #333; border-radius:8px; color:#d1a530; font-size:.8rem; overflow-x:auto;">
+                    SELECT u.UserID, u.UserName, u.ContactNumber, u.Email, u.Address,
+                    t.TicketID, t.TicketNumber, t.TicketStatus,
+                    b.ConfirmationNumber, b.BookingTime, b.ReservationDate,
+                    m.Title, m.Genre, m.Language, m.Duration,
+                    s.ShowDate, s.ShowTime,
+                    h.HallName, th.TheatreName,
+                    st.SeatRow, st.SeatNumber,
+                    NVL(p.Amount, 0) AS Amount
+                    FROM   UserTable u
+                    JOIN Booking b  ON b.UserID    = u.UserID
+                    JOIN Ticket  t  ON t.BookingID = b.BookingID
+                    JOIN Show    s  ON b.ShowID    = s.ShowID
+                    JOIN Movie   m  ON s.MovieID   = m.MovieID
+                    JOIN Hall    h  ON s.HallID    = h.HallID
+                    JOIN Theatre th ON h.TheatreID = th.TheatreID
+                    LEFT JOIN Seat    st ON t.SeatID  = st.SeatID
+                    LEFT JOIN Pricing p  ON t.PriceID = p.PriceID
+                    WHERE  u.UserID = :userId
+                    AND  b.ReservationDate >= ADD_MONTHS(SYSDATE, -6)
+                    ORDER BY b.ReservationDate DESC, t.TicketID DESC;
+
+                    -- Tables involved: UserTable, Booking, Ticket, Show, Movie,
+                    --                  Hall, Theatre, Seat, Pricing  (9 tables)
+                    -- Joins: 6 INNER + 2 LEFT  |  Filter: 6-month rolling window
+                </pre>
+            </details>
+        </div>
+    </section>
+}
+else if (Model.SelectedUserId.HasValue)
+{
+    <section class="kc-section kc-section-dark py-5">
+        <div class="container text-center text-muted">
+            <i class="fa-solid fa-ticket fa-3x mb-3 d-block"></i>
+            <p>No ticket data found for this user in the last 6 months.</p>
+        </div>
+    </section>
+}
